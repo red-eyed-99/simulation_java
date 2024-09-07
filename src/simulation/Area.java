@@ -7,6 +7,12 @@ import java.awt.*;
 import java.util.HashMap;
 
 public class Area {
-    private HashMap<Point, Entity> cells = new HashMap<>();
-    private HashMap<Point, Creature> creatures = new HashMap<>();
+    public int size;
+    public HashMap<Coordinates, Entity> entities;
+    public HashMap<Coordinates, Creature> creatures = new HashMap<>();
+
+    public Area(int size) {
+        this.size = size;
+        entities = new HashMap<>(size * 2);
+    }
 }

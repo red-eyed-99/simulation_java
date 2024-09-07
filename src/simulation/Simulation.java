@@ -5,6 +5,10 @@ public class Simulation {
     private Area area;
     private Actions actions;
 
+    public Simulation() {
+        actions = new Actions();
+    }
+
     public int getMovesCount() {
         return movesCount;
     }
