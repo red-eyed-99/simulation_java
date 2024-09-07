@@ -4,6 +4,7 @@ import simulation.entities.landscape.surface.Ground;
 import simulation.entities.landscape.surface.Water;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -29,40 +30,52 @@ public class AreaGenerator {
     }
 
     private void generateWater() {
-        int randomWaterCount = random.nextInt(area.size) + 10;
-
-        ArrayList<Coordinates> waterEntityCoordinates = new ArrayList<>(randomWaterCount);
+        int randomWaterCount = random.nextInt(area.size / 2) + 1;
 
         for (int i = 0; i < randomWaterCount; i++) {
-            int randomWaterSize = random.nextInt(area.size ) + 5;
+            int randomWaterSize = random.nextInt(area.size / 2) + 1;
 
-            while (true) {
-                Coordinates randomCoordinates = new Coordinates(
-                        random.nextInt(area.size),
-                        random.nextInt(area.size));
+            Coordinates waterSourceCoordinates = getRandomWaterSourceCoordinates();
 
-                if (!waterEntityCoordinates.contains(randomCoordinates)) {
-                    waterEntityCoordinates.add(randomCoordinates);
-                    break;
-                }
-            }
+            placeWaterSurface(waterSourceCoordinates, randomWaterSize);
+        }
+    }
 
-            for (int j = 1; j < randomWaterSize; j++) {
-                ArrayList<Coordinates> waterEntitiesNearGroundCoordinates = waterEntityCoordinates.stream()
-                        .filter(entityCoordinates -> !getNearbyGroundCoordinatesTo(entityCoordinates).isEmpty())
-                        .collect(Collectors.toCollection(ArrayList::new));
+    private Coordinates getRandomWaterSourceCoordinates() {
+        while (true) {
+            Coordinates coordinates = new Coordinates(
+                    random.nextInt(area.size),
+                    random.nextInt(area.size));
 
-                Coordinates randomWaterEntityCoordinates = waterEntitiesNearGroundCoordinates
-                        .get(random.nextInt(waterEntitiesNearGroundCoordinates.size()));
-
-                ArrayList<Coordinates> groundEntitiesNearWater = getNearbyGroundCoordinatesTo(randomWaterEntityCoordinates);
-
-                Coordinates randomGroundNearWaterCoordinates = groundEntitiesNearWater
-                        .get(random.nextInt(groundEntitiesNearWater.size()));
-
-                area.entities.replace(randomGroundNearWaterCoordinates, new Water());
+            if (area.entities.get(coordinates) instanceof Ground) {
+                return coordinates;
             }
         }
+    }
+
+    private void placeWaterSurface(Coordinates waterSource, int waterSize) {
+        ArrayList<Coordinates> waterNearGroundCoordinates = new ArrayList<>();
+        waterNearGroundCoordinates.add(waterSource);
+
+        for (int i = 0; i < waterSize; i++) {
+            waterNearGroundCoordinates = waterNearGroundCoordinates.stream()
+                    .filter(entityCoordinates -> !getNearbyGroundCoordinatesTo(entityCoordinates).isEmpty())
+                    .collect(Collectors.toCollection(ArrayList::new));
+
+            Coordinates waterCoordinates = getRandomCoordinates(waterNearGroundCoordinates);
+
+            ArrayList<Coordinates> groundNearWaterCoordinates = getNearbyGroundCoordinatesTo(waterCoordinates);
+
+            Coordinates groundCoordinates = getRandomCoordinates(groundNearWaterCoordinates);
+
+            area.entities.replace(groundCoordinates, new Water());
+
+            waterNearGroundCoordinates.add(groundCoordinates);
+        }
+    }
+
+    private Coordinates getRandomCoordinates(List<Coordinates> coordinates) {
+        return coordinates.get(random.nextInt(coordinates.size()));
     }
 
     private ArrayList<Coordinates> getNearbyGroundCoordinatesTo(Coordinates coordinates) {
