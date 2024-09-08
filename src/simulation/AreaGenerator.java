@@ -3,28 +3,64 @@ package simulation;
 import simulation.entities.landscape.surface.Ground;
 import simulation.entities.landscape.surface.Water;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AreaGenerator {
-    private Area area;
-    private Random random = new Random();
+    private final Area area;
+    private final Random random = new Random();
+    private final ArrayList<Coordinates> areaGroundCoordinates;
+    private final Map<EntityType, Double> entityMultipliers = new HashMap<>();
+
+    private static final double TREE_MULTIPLIER = 0.2;
+    private static final double ROCK_MULTIPLIER = 0.1;
+    private static final double GRASS_MULTIPLIER = 0.2;
 
     public AreaGenerator(Area area) {
         this.area = area;
+
+        areaGroundCoordinates = new ArrayList<>(area.size * area.size);
+
+        setMultipliers();
+    }
+
+    private void setMultipliers() {
+        entityMultipliers.put(EntityType.TREE, TREE_MULTIPLIER);
+        entityMultipliers.put(EntityType.ROCK, ROCK_MULTIPLIER);
+        entityMultipliers.put(EntityType.GRASS, GRASS_MULTIPLIER);
     }
 
     public void generateArea() {
-        generateGround();
-        generateWater();
+        generateEntity(EntityType.GROUND);
+        generateEntity(EntityType.WATER);
+        generateEntity(EntityType.TREE);
+        generateEntity(EntityType.ROCK);
+        generateEntity(EntityType.GRASS);
+    }
+
+    private void generateEntity(EntityType type) {
+        EntityFactory factory = new EntityFactory();
+
+        if (type == EntityType.GROUND) {
+            generateGround();
+        } else if (type == EntityType.WATER) {
+            generateWater();
+        } else {
+            int entityCount = (int) (area.entities.size() * entityMultipliers.get(type));
+            for (int i = 0; i < entityCount; i++) {
+                Coordinates groundCoordinates = getRandomCoordinates();
+                area.entities.replace(groundCoordinates, factory.createEntity(type));
+                areaGroundCoordinates.remove(groundCoordinates);
+            }
+        }
     }
 
     private void generateGround() {
         for (int x = 0; x < area.size; x++) {
             for (int y = 0; y < area.size; y++) {
-                area.entities.put(new Coordinates(x, y), new Ground());
+                Coordinates groundCoordinates = new Coordinates(x, y);
+                area.entities.put(groundCoordinates, new Ground());
+                areaGroundCoordinates.add(groundCoordinates);
             }
         }
     }
@@ -59,26 +95,32 @@ public class AreaGenerator {
 
         for (int i = 0; i < waterSize; i++) {
             waterNearGroundCoordinates = waterNearGroundCoordinates.stream()
-                    .filter(entityCoordinates -> !getNearbyGroundCoordinatesTo(entityCoordinates).isEmpty())
+                    .filter(entityCoordinates -> !getNearbyGroundCoordinates(entityCoordinates).isEmpty())
                     .collect(Collectors.toCollection(ArrayList::new));
 
             Coordinates waterCoordinates = getRandomCoordinates(waterNearGroundCoordinates);
 
-            ArrayList<Coordinates> groundNearWaterCoordinates = getNearbyGroundCoordinatesTo(waterCoordinates);
+            ArrayList<Coordinates> groundNearWaterCoordinates = getNearbyGroundCoordinates(waterCoordinates);
 
             Coordinates groundCoordinates = getRandomCoordinates(groundNearWaterCoordinates);
 
             area.entities.replace(groundCoordinates, new Water());
 
             waterNearGroundCoordinates.add(groundCoordinates);
+
+            areaGroundCoordinates.remove(groundCoordinates);
         }
+    }
+
+    private Coordinates getRandomCoordinates() {
+        return areaGroundCoordinates.get(random.nextInt(areaGroundCoordinates.size()));
     }
 
     private Coordinates getRandomCoordinates(List<Coordinates> coordinates) {
         return coordinates.get(random.nextInt(coordinates.size()));
     }
 
-    private ArrayList<Coordinates> getNearbyGroundCoordinatesTo(Coordinates coordinates) {
+    private ArrayList<Coordinates> getNearbyGroundCoordinates(Coordinates coordinates) {
         return area.entities.keySet().stream()
                 .filter(entityCoordinates -> (Math.abs(entityCoordinates.x - coordinates.x) == 1 && entityCoordinates.y == coordinates.y)
                         || (Math.abs(entityCoordinates.y - coordinates.y) == 1 && entityCoordinates.x == coordinates.x)

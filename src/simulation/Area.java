@@ -3,13 +3,12 @@ package simulation;
 import simulation.entities.Entity;
 import simulation.entities.creatures.Creature;
 
-import java.awt.*;
 import java.util.HashMap;
 
 public class Area {
-    public int size;
-    public HashMap<Coordinates, Entity> entities;
-    public HashMap<Coordinates, Creature> creatures = new HashMap<>();
+    public final int size;
+    public final HashMap<Coordinates, Entity> entities;
+    public final HashMap<Coordinates, Creature> creatures = new HashMap<>();
 
     public Area(int size) {
         this.size = size;
