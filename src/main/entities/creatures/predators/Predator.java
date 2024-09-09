@@ -1,6 +1,6 @@
-package simulation.entities.creatures.predators;
+package main.entities.creatures.predators;
 
-import simulation.entities.creatures.Creature;
+import main.entities.creatures.Creature;
 
 public class Predator extends Creature {
     @Override

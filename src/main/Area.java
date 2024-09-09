@@ -1,7 +1,7 @@
-package simulation;
+package main;
 
-import simulation.entities.Entity;
-import simulation.entities.creatures.Creature;
+import main.entities.Entity;
+import main.entities.creatures.Creature;
 
 import java.util.HashMap;
 

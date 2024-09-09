@@ -1,6 +1,6 @@
-package simulation.entities.landscape.surface;
+package main.entities.landscape.surface;
 
-import simulation.entities.Entity;
+import main.entities.Entity;
 
 public class Water extends Entity {
     @Override

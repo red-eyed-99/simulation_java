@@ -1,4 +1,4 @@
-package simulation;
+package main;
 
 import java.util.Objects;
 

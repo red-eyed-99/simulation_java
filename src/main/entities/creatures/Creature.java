@@ -1,6 +1,6 @@
-package simulation.entities.creatures;
+package main.entities.creatures;
 
-import simulation.entities.Entity;
+import main.entities.Entity;
 
 import java.util.HashSet;
 import java.util.Set;

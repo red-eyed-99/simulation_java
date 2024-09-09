@@ -1,6 +1,6 @@
-package simulation.entities.landscape.static_objects;
+package main.entities.landscape.static_objects;
 
-import simulation.entities.Entity;
+import main.entities.Entity;
 
 public class Rock extends Entity {
     @Override

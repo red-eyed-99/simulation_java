@@ -1,6 +1,6 @@
-package simulation.entities.food_resources;
+package main.entities.food_resources;
 
-import simulation.entities.Entity;
+import main.entities.Entity;
 
 public class Grass extends Entity {
     @Override

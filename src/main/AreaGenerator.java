@@ -1,7 +1,7 @@
-package simulation;
+package main;
 
-import simulation.entities.landscape.surface.Ground;
-import simulation.entities.landscape.surface.Water;
+import main.entities.landscape.surface.Ground;
+import main.entities.landscape.surface.Water;
 
 import java.util.*;
 import java.util.stream.Collectors;

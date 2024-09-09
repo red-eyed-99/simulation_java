@@ -1,4 +1,4 @@
-package simulation;
+package main;
 
 public class Simulation {
     private int movesCount = 0;

@@ -1,4 +1,4 @@
-package simulation;
+package main;
 
 public enum EntityType {
     GROUND,
