@@ -30,12 +30,14 @@ public class AreaGenerator {
         entityMultipliers.put(EntityType.GRASS, GRASS_MULTIPLIER);
     }
 
-    public void generateArea() {
+    public Area generateArea() {
         generateEntity(EntityType.GROUND);
         generateEntity(EntityType.WATER);
         generateEntity(EntityType.TREE);
         generateEntity(EntityType.ROCK);
         generateEntity(EntityType.GRASS);
+
+        return area;
     }
 
     private void generateEntity(EntityType type) {
