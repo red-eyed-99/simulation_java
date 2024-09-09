@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import main.ui.custom_controls.ZoomableScrollPane?>
+
+<GridPane
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="main.MainController"
+        stylesheets="/main/ui/stylesheets/style.css">
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS" percentWidth="80"/>
+        <ColumnConstraints hgrow="ALWAYS" percentWidth="20"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints vgrow="ALWAYS" percentHeight="5"/>
+        <RowConstraints vgrow="ALWAYS" percentHeight="95"/>
+    </rowConstraints>
+    <MenuBar GridPane.rowIndex="0" GridPane.columnSpan="2">
+        <Menu text="Test1"/>
+        <Menu text="Test2"/>
+        <Menu text="Test3"/>
+    </MenuBar>
+    <ZoomableScrollPane
+            fx:id="zoomableScrollPane"
+            GridPane.rowIndex="1"
+            GridPane.columnIndex="0">
+        <GridPane fx:id="areaGrid"/>
+    </ZoomableScrollPane>
+</GridPane>
