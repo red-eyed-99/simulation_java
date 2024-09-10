@@ -139,6 +139,11 @@ public class MainController {
 
                 String pathToImage;
 
+                // ground rendering implements in style.css as background
+                if (entity instanceof Ground) {
+                    continue;
+                }
+
                 if (entity instanceof Creature creature) {
                     HashMap<CreatureViewDirection, String> imagePaths = creaturePathsToImage.get(entity.getClass());
                     pathToImage = imagePaths.get(creature.viewDirection);
