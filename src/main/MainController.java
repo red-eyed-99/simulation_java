@@ -8,7 +8,6 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import main.entities.Entity;
-import main.entities.creatures.Creature;
 import main.entities.landscape.surface.Ground;
 import main.ui.custom_controls.ZoomableScrollPane;
 
@@ -37,8 +36,7 @@ public class MainController {
         zoomableScrollPane.setZoomableTarget(areaGrid);
     }
 
-    @FXML
-    public void fillAreaGridCells(Area area) throws FileNotFoundException {
+    private void fillAreaGridCells(Area area) throws FileNotFoundException {
         for (int row = 0; row < area.size; row++) {
             areaGrid.getRowConstraints().add(new RowConstraints());
             for (int column = 0; column < area.size; column++) {
@@ -46,20 +44,22 @@ public class MainController {
 
                 Entity entity = area.entities.get(new Coordinates(row, column));
 
-                String pathToImage;
-
                 // ground rendering implements in style.css as background
                 if (entity instanceof Ground) {
                     continue;
                 }
 
-                pathToImage = ImagePathsManager.getEntityImagePath(entity);
-
-                ImageView entityImage = new ImageView(new Image(Main.class.getResourceAsStream(pathToImage)));
-
-                areaGrid.add(entityImage, column, row);
+                areaGrid.add(getEntityImage(entity), column, row);
             }
         }
+    }
+
+    private ImageView getEntityImage(Entity entity) {
+        String pathToImage;
+
+        pathToImage = ImagePathsManager.getEntityImagePath(entity);
+
+        return new ImageView(new Image(Main.class.getResourceAsStream(pathToImage)));
     }
 
     public Node getNodeFromGridPane(GridPane gridPane, int col, int row) {
