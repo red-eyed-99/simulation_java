@@ -16,9 +16,4 @@ public abstract class Creature extends Entity {
     private Set<Entity> pathToFood = new HashSet<>();
 
     public abstract void makeMove();
-
-    @Override
-    public boolean canStep() {
-        return false;
-    }
 }
