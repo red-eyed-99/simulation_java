@@ -50,7 +50,7 @@ public class AreaGenerator {
         } else {
             int entityCount = (int) (area.entities.size() * entityMultipliers.get(type));
             for (int i = 0; i < entityCount; i++) {
-                Coordinates groundCoordinates = getRandomCoordinates();
+                Coordinates groundCoordinates = getRandomCoordinates(areaGroundCoordinates);
                 area.entities.replace(groundCoordinates, factory.createEntity(type));
                 areaGroundCoordinates.remove(groundCoordinates);
             }
@@ -112,10 +112,6 @@ public class AreaGenerator {
 
             areaGroundCoordinates.remove(groundCoordinates);
         }
-    }
-
-    private Coordinates getRandomCoordinates() {
-        return areaGroundCoordinates.get(random.nextInt(areaGroundCoordinates.size()));
     }
 
     private Coordinates getRandomCoordinates(List<Coordinates> coordinates) {
