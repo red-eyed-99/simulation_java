@@ -12,7 +12,6 @@ import main.entities.landscape.surface.Ground;
 import main.ui.custom_controls.ZoomableScrollPane;
 
 import java.io.FileNotFoundException;
-import java.util.HashMap;
 
 public class MainController {
     private Simulation simulation;
@@ -42,7 +41,7 @@ public class MainController {
             for (int column = 0; column < area.size; column++) {
                 areaGrid.getColumnConstraints().add(new ColumnConstraints());
 
-                Entity entity = area.entities.get(new Coordinates(row, column));
+                Entity entity = area.getEntity(new Coordinates(row, column));
 
                 // ground rendering implements in style.css as background
                 if (entity instanceof Ground) {
