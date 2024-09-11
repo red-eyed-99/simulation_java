@@ -1,7 +1,14 @@
 package main;
 
+import main.entities.Entity;
+import main.entities.creatures.Creature;
+import main.entities.creatures.herbivores.Ostrich;
+import main.entities.creatures.predators.Lion;
+import main.entities.landscape.food_resources.Grass;
+import main.entities.landscape.static_objects.Rock;
 import main.entities.landscape.surface.Ground;
 import main.entities.landscape.surface.Water;
+import main.entities.landscape.static_objects.Tree;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -9,53 +16,53 @@ import java.util.stream.Collectors;
 public class AreaGenerator {
     private final Area area;
     private final Random random = new Random();
-    private final ArrayList<Coordinates> areaGroundCoordinates;
+    private final List<Coordinates> areaGroundCoordinates;
 
     public AreaGenerator(Area area) {
         this.area = area;
 
-        areaGroundCoordinates = new ArrayList<>(area.size * area.size);
+        areaGroundCoordinates = new ArrayList<>(area.getLandscapeEntitiesCount());
     }
 
     public Area generateArea() {
         // landscape
-        generateEntity(EntityType.GROUND);
-        generateEntity(EntityType.WATER);
-        generateEntity(EntityType.TREE);
-        generateEntity(EntityType.ROCK);
-        generateEntity(EntityType.GRASS);
+        generateGround();
+        generateWater();
+
+        generateEntity(new Tree());
+        generateEntity(new Rock());
+        generateEntity(new Grass());
 
         // creatures
 
         // herbivores
-        //generateEntity(EntityType.ELEPHANT);
-        //generateEntity(EntityType.GIRAFEE);
-        generateEntity(EntityType.OSTRICH);
-        //generateEntity(EntityType.RHINO);
+        //generateEntity(new Elephant());
+        //generateEntity(new Girafee());
+        generateEntity(new Ostrich());
+        //generateEntity(new Rhino());
 
         // predators
-        //generateEntity(EntityType.CROCODILE);
-        generateEntity(EntityType.LION);
-        //generateEntity(EntityType.PANTHER);
-        //generateEntity(EntityType.TIGER);
+        //generateEntity(new Crocodile());
+        generateEntity(new Lion());
+        //generateEntity(new Panther());
+        //generateEntity(new Tiger());
 
         return area;
     }
 
-    private void generateEntity(EntityType type) {
-        EntityFactory factory = new EntityFactory();
+    private void generateEntity(Entity entity) {
+        int entityCount = (int) (area.getLandscapeEntitiesCount() * EntityGenerationMultipliers.getMultiplier(entity.getClass()));
 
-        if (type == EntityType.GROUND) {
-            generateGround();
-        } else if (type == EntityType.WATER) {
-            generateWater();
-        } else {
-            int entityCount = (int) (area.landscape.size() * EntityGenerationMultipliers.getMultiplier(type));
-            for (int i = 0; i < entityCount; i++) {
-                Coordinates groundCoordinates = getRandomCoordinates(areaGroundCoordinates);
-                area.landscape.replace(groundCoordinates, factory.createEntity(type));
-                areaGroundCoordinates.remove(groundCoordinates);
+        for (int i = 0; i < entityCount; i++) {
+            Coordinates groundCoordinates = getRandomCoordinates(areaGroundCoordinates);
+
+            if (entity instanceof Creature creature) {
+                area.addEntity(groundCoordinates, creature);
+            } else {
+                area.replaceLandscapeEntity(groundCoordinates, entity);
             }
+
+            areaGroundCoordinates.remove(groundCoordinates);
         }
     }
 
@@ -63,7 +70,7 @@ public class AreaGenerator {
         for (int x = 0; x < area.size; x++) {
             for (int y = 0; y < area.size; y++) {
                 Coordinates groundCoordinates = new Coordinates(x, y);
-                area.landscape.put(groundCoordinates, new Ground());
+                area.addEntity(groundCoordinates, new Ground());
                 areaGroundCoordinates.add(groundCoordinates);
             }
         }
@@ -87,28 +94,39 @@ public class AreaGenerator {
                     random.nextInt(area.size),
                     random.nextInt(area.size));
 
-            if (area.landscape.get(coordinates) instanceof Ground) {
+            if (area.getLandscapeEntity(coordinates) instanceof Ground) {
                 return coordinates;
             }
         }
     }
 
-    private void placeWaterSurface(Coordinates waterSource, int waterSize) {
-        ArrayList<Coordinates> waterNearGroundCoordinates = new ArrayList<>();
-        waterNearGroundCoordinates.add(waterSource);
+    private void placeWaterSurface(Coordinates waterSourceCoordinates, int waterSize) {
+        List<Coordinates> waterNearGroundCoordinates = new ArrayList<>();
+        waterNearGroundCoordinates.add(waterSourceCoordinates);
 
-        for (int i = 0; i < waterSize; i++) {
-            waterNearGroundCoordinates = waterNearGroundCoordinates.stream()
-                    .filter(entityCoordinates -> !getNearbyGroundCoordinates(entityCoordinates).isEmpty())
-                    .collect(Collectors.toCollection(ArrayList::new));
+        placeWaterSource(waterSourceCoordinates);
+
+        if (waterSize > 1) {
+            fillSurfaceWithWater(waterNearGroundCoordinates, waterSize);
+        }
+    }
+
+    private void placeWaterSource(Coordinates waterSource) {
+        area.replaceLandscapeEntity(waterSource, new Water());
+        areaGroundCoordinates.remove(waterSource);
+    }
+
+    private void fillSurfaceWithWater(List<Coordinates> waterNearGroundCoordinates, int waterSize) {
+        for (int i = 1; i < waterSize; i++) {
+            waterNearGroundCoordinates = updateWaterNearGroundCoordinates(waterNearGroundCoordinates);
 
             Coordinates waterCoordinates = getRandomCoordinates(waterNearGroundCoordinates);
 
-            ArrayList<Coordinates> groundNearWaterCoordinates = getNearbyGroundCoordinates(waterCoordinates);
+            List<Coordinates> groundNearWaterCoordinates = getNearbyGroundCoordinates(waterCoordinates);
 
             Coordinates groundCoordinates = getRandomCoordinates(groundNearWaterCoordinates);
 
-            area.landscape.replace(groundCoordinates, new Water());
+            area.replaceLandscapeEntity(groundCoordinates, new Water());
 
             waterNearGroundCoordinates.add(groundCoordinates);
 
@@ -116,15 +134,23 @@ public class AreaGenerator {
         }
     }
 
+    private List<Coordinates> updateWaterNearGroundCoordinates(List<Coordinates> waterNearGroundCoordinates) {
+        return waterNearGroundCoordinates.stream()
+                .filter(entityCoordinates -> !getNearbyGroundCoordinates(entityCoordinates).isEmpty())
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
     private Coordinates getRandomCoordinates(List<Coordinates> coordinates) {
         return coordinates.get(random.nextInt(coordinates.size()));
     }
 
-    private ArrayList<Coordinates> getNearbyGroundCoordinates(Coordinates coordinates) {
-        return area.landscape.keySet().stream()
-                .filter(entityCoordinates -> (Math.abs(entityCoordinates.x - coordinates.x) == 1 && entityCoordinates.y == coordinates.y)
-                        || (Math.abs(entityCoordinates.y - coordinates.y) == 1 && entityCoordinates.x == coordinates.x)
-                        && area.landscape.get(entityCoordinates) instanceof Ground)
+    private List<Coordinates> getNearbyGroundCoordinates(Coordinates coordinates) {
+        return area.getLandscapeEntitiesCoordinates().stream()
+                .filter(entityCoordinates -> ((Math.abs(entityCoordinates.x - coordinates.x) == 1 && entityCoordinates.y == coordinates.y)
+                        || (Math.abs(entityCoordinates.y - coordinates.y) == 1 && entityCoordinates.x == coordinates.x))
+                        && (area.getLandscapeEntity(entityCoordinates) instanceof Ground))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 }
+
+
