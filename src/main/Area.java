@@ -5,29 +5,17 @@ import main.entities.creatures.Creature;
 import main.entities.landscape.LandscapeEntity;
 
 import java.util.HashMap;
-import java.util.Set;
+import java.util.Map;
 
 public class Area {
     public final int size;
 
-    private final HashMap<Coordinates, LandscapeEntity> landscapeEntities;
-    private final HashMap<Coordinates, Creature> creatures = new HashMap<>();
+    private final Map<Coordinates, LandscapeEntity> landscapeEntities;
+    private final Map<Coordinates, Creature> creatures = new HashMap<>();
 
     public Area(int size) {
         this.size = size;
         landscapeEntities = new HashMap<>(size * 2);
-    }
-
-    public int getLandscapeEntitiesCount() {
-        return landscapeEntities.size();
-    }
-
-    public void addEntity(Coordinates coordinates, Entity entity) {
-        if (entity instanceof Creature creature) {
-            creatures.put(coordinates, creature);
-        } else {
-            landscapeEntities.put(coordinates, (LandscapeEntity) entity);
-        }
     }
 
     public Entity getLandscapeOrCreature(Coordinates coordinates) {
@@ -39,19 +27,11 @@ public class Area {
         return landscapeEntities.get(coordinates);
     }
 
-    public LandscapeEntity getLandscapeEntity(Coordinates coordinates) {
-        return landscapeEntities.get(coordinates);
+    public Map<Coordinates, Creature> getCreatures() {
+        return creatures;
     }
 
-    public Set<Coordinates> getLandscapeEntitiesCoordinates() {
-        return landscapeEntities.keySet();
-    }
-
-    public void replaceLandscapeEntity(Coordinates coordinates, Entity entity) {
-        landscapeEntities.replace(coordinates, (LandscapeEntity) entity);
-    }
-
-    public void removeCreature(Coordinates coordinates) {
-        creatures.remove(coordinates);
+    public Map<Coordinates, LandscapeEntity> getLandscapeEntities() {
+        return landscapeEntities;
     }
 }
