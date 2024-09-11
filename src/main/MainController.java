@@ -41,7 +41,7 @@ public class MainController {
             for (int column = 0; column < area.size; column++) {
                 areaGrid.getColumnConstraints().add(new ColumnConstraints());
 
-                Entity entity = area.getEntity(new Coordinates(row, column));
+                Entity entity = area.getLandscapeOrCreature(new Coordinates(row, column));
 
                 // ground rendering implements in style.css as background
                 if (entity instanceof Ground) {
