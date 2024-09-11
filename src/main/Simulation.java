@@ -5,9 +5,8 @@ public class Simulation {
     private Area area;
     private Actions actions;
 
-    public Simulation() {
-        AreaGenerator generator = new AreaGenerator(new Area(10));
-        area = generator.generateArea();
+    public Simulation(Area area) {
+        this.area = area;
     }
 
     public int getMovesCount() {

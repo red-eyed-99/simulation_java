@@ -8,16 +8,23 @@ import java.io.IOException;
 
 public class Main extends Application {
     public static void main(String[] args) {
-
-
         launch(args);
     }
 
     @Override
     public void start(Stage stage) throws IOException {
+        AreaGenerator generator = new AreaGenerator(new Area(10));
+        Area area = generator.generateArea();
+
+        Simulation simulation = new Simulation(area);
+
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/ui/layouts/Main.fxml"));
 
         Scene scene = new Scene(fxmlLoader.load());
+
+        MainController controller = fxmlLoader.getController();
+        controller.setSimulation(simulation);
+        controller.fillAreaGridCells();
 
         stage.setScene(scene);
         stage.setTitle("Simulation");
