@@ -1,7 +1,7 @@
 package main.entities.landscape.static_objects;
 
-import main.entities.Entity;
+import main.entities.landscape.LandscapeEntity;
 
-public class Tree extends Entity {
+public class Tree extends LandscapeEntity {
 
 }

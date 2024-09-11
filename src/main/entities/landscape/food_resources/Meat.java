@@ -1,8 +1,8 @@
 package main.entities.landscape.food_resources;
 
-import main.entities.Entity;
+import main.entities.landscape.LandscapeEntity;
 
-public class Meat extends Entity {
+public class Meat extends LandscapeEntity {
 
 
 }
