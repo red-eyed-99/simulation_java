@@ -4,6 +4,7 @@ import main.entities.Entity;
 import main.entities.creatures.Creature;
 import main.entities.creatures.herbivores.*;
 import main.entities.creatures.predators.*;
+import main.entities.landscape.LandscapeEntity;
 import main.entities.landscape.food_resources.Grass;
 import main.entities.landscape.food_resources.Meat;
 import main.entities.landscape.static_objects.Rock;
@@ -15,39 +16,39 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ImagePathsManager {
-    private static final Map<Class<? extends Entity>, String> entityPathsToImage = new HashMap<>();
+    private static final Map<Class<? extends LandscapeEntity>, String> LANDSCAPE_PATHS_TO_IMAGE = new HashMap<>();
 
     static {
         setEntityImagePaths();
     }
 
-    private static final Map<Class<? extends Creature>, HashMap<CreatureViewDirection, String>> creaturePathsToImage = new HashMap<>();
+    private static final Map<Class<? extends Creature>, HashMap<CreatureViewDirection, String>> CREATURE_PATHS_TO_IMAGE = new HashMap<>();
 
     static {
         setCreatureImagePaths();
     }
 
     private static void setEntityImagePaths() {
-        entityPathsToImage.put(Ground.class, "/main/ui/images/landscape/ground.png");
-        entityPathsToImage.put(Water.class, "/main/ui/images/landscape/water.png");
-        entityPathsToImage.put(Tree.class, "/main/ui/images/landscape/tree.png");
-        entityPathsToImage.put(Rock.class, "/main/ui/images/landscape/rock.png");
-        entityPathsToImage.put(Grass.class, "/main/ui/images/landscape/grass.png");
-        entityPathsToImage.put(Meat.class, "/main/ui/images/meat.png");
+        LANDSCAPE_PATHS_TO_IMAGE.put(Ground.class, "/main/ui/images/landscape/ground.png");
+        LANDSCAPE_PATHS_TO_IMAGE.put(Water.class, "/main/ui/images/landscape/water.png");
+        LANDSCAPE_PATHS_TO_IMAGE.put(Tree.class, "/main/ui/images/landscape/tree.png");
+        LANDSCAPE_PATHS_TO_IMAGE.put(Rock.class, "/main/ui/images/landscape/rock.png");
+        LANDSCAPE_PATHS_TO_IMAGE.put(Grass.class, "/main/ui/images/landscape/grass.png");
+        LANDSCAPE_PATHS_TO_IMAGE.put(Meat.class, "/main/ui/images/meat.png");
     }
 
     private static void setCreatureImagePaths() {
         // predators
-        creaturePathsToImage.put(Lion.class, getCreatureImagePaths(Lion.class));
-        creaturePathsToImage.put(Crocodile.class, getCreatureImagePaths(Crocodile.class));
-        creaturePathsToImage.put(Panther.class, getCreatureImagePaths(Panther.class));
-        creaturePathsToImage.put(Tiger.class, getCreatureImagePaths(Tiger.class));
+        CREATURE_PATHS_TO_IMAGE.put(Lion.class, getCreatureImagePaths(Lion.class));
+        CREATURE_PATHS_TO_IMAGE.put(Crocodile.class, getCreatureImagePaths(Crocodile.class));
+        CREATURE_PATHS_TO_IMAGE.put(Panther.class, getCreatureImagePaths(Panther.class));
+        CREATURE_PATHS_TO_IMAGE.put(Tiger.class, getCreatureImagePaths(Tiger.class));
 
         //herbivores
-        creaturePathsToImage.put(Elephant.class, getCreatureImagePaths(Elephant.class));
-        creaturePathsToImage.put(Girafee.class, getCreatureImagePaths(Girafee.class));
-        creaturePathsToImage.put(Ostrich.class, getCreatureImagePaths(Ostrich.class));
-        creaturePathsToImage.put(Rhino.class, getCreatureImagePaths(Rhino.class));
+        CREATURE_PATHS_TO_IMAGE.put(Elephant.class, getCreatureImagePaths(Elephant.class));
+        CREATURE_PATHS_TO_IMAGE.put(Girafee.class, getCreatureImagePaths(Girafee.class));
+        CREATURE_PATHS_TO_IMAGE.put(Ostrich.class, getCreatureImagePaths(Ostrich.class));
+        CREATURE_PATHS_TO_IMAGE.put(Rhino.class, getCreatureImagePaths(Rhino.class));
     }
 
     private static HashMap<CreatureViewDirection, String> getCreatureImagePaths(Class<? extends Creature> creatureType) {
@@ -101,10 +102,10 @@ public class ImagePathsManager {
 
     public static String getEntityImagePath(Entity entity) {
         if (entity instanceof Creature creature) {
-            Map<CreatureViewDirection, String> imagePaths = creaturePathsToImage.get(entity.getClass());
+            Map<CreatureViewDirection, String> imagePaths = CREATURE_PATHS_TO_IMAGE.get(entity.getClass());
             return imagePaths.get(creature.viewDirection);
         }
 
-        return entityPathsToImage.get(entity.getClass());
+        return LANDSCAPE_PATHS_TO_IMAGE.get(entity.getClass());
     }
 }
