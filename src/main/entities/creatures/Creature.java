@@ -16,4 +16,8 @@ public abstract class Creature extends Entity {
     private Set<Entity> pathToFood = new HashSet<>();
 
     public abstract void makeMove();
+
+    public int getMoveSpeed() {
+        return moveSpeed;
+    }
 }
