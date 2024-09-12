@@ -2,6 +2,7 @@ package main;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
@@ -36,7 +37,10 @@ public class MainController {
             for (int column = 0; column < simulation.getArea().size; column++) {
                 areaGrid.getColumnConstraints().add(new ColumnConstraints());
 
-                Entity entity = simulation.getArea().getLandscapeOrCreature(new Coordinates(row, column));
+                areaGrid.getRowConstraints().get(row).setPrefHeight(100);
+                areaGrid.getColumnConstraints().get(column).setPrefWidth(100);
+
+                Entity entity = simulation.getArea().getLandscapeOrCreature(new Coordinates(column, row));
 
                 // ground rendering implements in style.css as background
                 if (entity instanceof Ground) {
