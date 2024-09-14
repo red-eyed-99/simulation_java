@@ -1,5 +1,6 @@
 package main.entities.creatures;
 
+import main.CreatureStatus;
 import main.CreatureViewDirection;
 import main.entities.Entity;
 
@@ -11,11 +12,27 @@ public abstract class Creature extends Entity {
     private int moveSpeed = 2;
     private int runSpeed;
 
+    private CreatureStatus status;
+
     public CreatureViewDirection viewDirection = CreatureViewDirection.RIGHT;
 
-    public abstract void makeMove();
+    public void makeMove() {
+
+    }
+
+    public void eat() {
+
+    }
 
     public int getMoveSpeed() {
         return moveSpeed;
+    }
+
+    public CreatureStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CreatureStatus status) {
+        this.status = status;
     }
 }
