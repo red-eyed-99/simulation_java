@@ -13,8 +13,6 @@ public abstract class Creature extends Entity {
 
     public CreatureViewDirection viewDirection = CreatureViewDirection.RIGHT;
 
-    private Set<Entity> pathToFood = new HashSet<>();
-
     public abstract void makeMove();
 
     public int getMoveSpeed() {

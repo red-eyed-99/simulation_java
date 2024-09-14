@@ -11,7 +11,7 @@ public class Area {
     public final int size;
 
     private final Map<Coordinates, LandscapeEntity> landscapeEntities;
-    private final Map<Coordinates, Creature> creatures = new HashMap<>();
+    private Map<Coordinates, Creature> creatures = new HashMap<>();
 
     public Area(int size) {
         this.size = size;
@@ -29,6 +29,10 @@ public class Area {
 
     public Map<Coordinates, Creature> getCreatures() {
         return creatures;
+    }
+
+    public void updateCreatures(Map<Coordinates, Creature> newCreaturesPositions) {
+        creatures = newCreaturesPositions;
     }
 
     public Map<Coordinates, LandscapeEntity> getLandscapeEntities() {

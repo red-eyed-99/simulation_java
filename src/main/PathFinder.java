@@ -15,7 +15,7 @@ public class PathFinder {
         this.area = area;
     }
 
-    class PathNode {
+    static class PathNode {
         Coordinates coordinates;
         int pathLengthFromStart;
         PathNode previousNode;
@@ -31,6 +31,8 @@ public class PathFinder {
     }
 
     public Stack<Coordinates> getPathToFood(Coordinates creatureCoordinates, Creature creature) {
+        Stack<Coordinates> pathToFood = new Stack<>();
+
         PathNode targetNode = new PathNode(getNearFoodCoordinates(creatureCoordinates, creature));
 
         Set<PathNode> checkedNodes = new HashSet<>();
@@ -41,13 +43,14 @@ public class PathFinder {
 
         nodesForCheck.add(startNode);
 
-        while (nodesForCheck.size() > 0) {
+        while (!nodesForCheck.isEmpty()) {
             PathNode currentNode = nodesForCheck.stream()
                     .min(Comparator.comparing(PathNode::getExpectedFullPathLength))
                     .get();
 
             if (foodIsNearby(currentNode.coordinates, targetNode.coordinates)) {
-                return pavePath(currentNode);
+                pathToFood = pavePath(currentNode);
+                return pathToFood;
             }
 
             nodesForCheck.remove(currentNode);
@@ -82,7 +85,7 @@ public class PathFinder {
             }
         }
 
-        return null;
+        return pathToFood;
     }
 
     private Stack<Coordinates> pavePath(PathNode targetNode) {
@@ -97,9 +100,9 @@ public class PathFinder {
 
         if (coordinatesToTarget.size() == 1) {
             coordinatesToTarget.clear();
+        } else {
+            coordinatesToTarget.removeLast();
         }
-
-        coordinatesToTarget.removeLast();
 
         return coordinatesToTarget;
     }
@@ -112,8 +115,8 @@ public class PathFinder {
                     .filter(entityCoordinates -> area.getLandscapeEntities().get(entityCoordinates) instanceof Grass)
                     .collect(Collectors.toCollection(ArrayList::new));
         } else {
-            foodCoordinatesList = area.getLandscapeEntities().keySet().stream()
-                    .filter(entityCoordinates -> area.getCreatures().get(entityCoordinates) instanceof Herbivore)
+            foodCoordinatesList = area.getCreatures().keySet().stream()
+                    .filter(creatureCoordinates -> area.getCreatures().get(creatureCoordinates) instanceof Herbivore)
                     .collect(Collectors.toCollection(ArrayList::new));
         }
 
