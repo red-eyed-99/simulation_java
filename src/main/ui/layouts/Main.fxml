@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Menu?>
 <?import main.ui.custom_controls.ZoomableScrollPane?>
 
+<?import javafx.scene.control.Button?>
 <GridPane
         xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="main.MainController"
@@ -28,4 +29,10 @@
             GridPane.columnIndex="0">
         <GridPane fx:id="areaGrid"/>
     </ZoomableScrollPane>
+    <Button
+            fx:id="nextTurnButton"
+            GridPane.rowIndex="1"
+            GridPane.columnIndex="1"
+            text="Next Turn"
+            onAction="#nextTurnButtonClick"/>
 </GridPane>
