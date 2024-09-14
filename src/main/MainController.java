@@ -11,6 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import main.entities.Entity;
 import main.entities.creatures.Creature;
+import main.entities.landscape.LandscapeEntity;
 import main.entities.landscape.surface.Ground;
 import main.ui.custom_controls.ZoomableScrollPane;
 
@@ -66,7 +67,25 @@ public class MainController {
         return new ImageView(new Image(Objects.requireNonNull(Main.class.getResourceAsStream(pathToImage))));
     }
 
-    public ImageView getAreaGridCellCreatureImage(int col, int row) {
+    private ImageView getAreaGridCellLandscapeImage(int col, int row) {
+        List<ImageView> images = new ArrayList<>();
+
+        for (Node node : areaGrid.getChildren()) {
+            if (node instanceof ImageView imageView
+                    && GridPane.getColumnIndex(node) == col
+                    && GridPane.getRowIndex(node) == row){
+                images.add(imageView);
+            }
+        }
+
+        if (!images.isEmpty()) {
+            return images.getFirst();
+        }
+
+        throw new NoSuchElementException();
+    }
+
+    private ImageView getAreaGridCellCreatureImage(int col, int row) {
         List<ImageView> images = new ArrayList<>();
 
         for (Node node : areaGrid.getChildren()) {
@@ -86,17 +105,28 @@ public class MainController {
 
     @FXML
     private void nextTurnButtonClick(ActionEvent event) {
-        Set<Coordinates> currentCreaturesCoordinates = new HashSet<>(simulation.getArea().getCreatures().keySet());
-
-        Set<Coordinates> oldCreaturesCoordinates = new HashSet<>(currentCreaturesCoordinates.size());
-
-        for (Coordinates coordinates : currentCreaturesCoordinates) {
-            oldCreaturesCoordinates.add(new Coordinates(coordinates.x, coordinates.y));
-        }
+        Set<Coordinates> oldCreaturesCoordinates = Set.copyOf(simulation.getArea().getCreatures().keySet());
+        Map<Coordinates, LandscapeEntity> oldLandscape = Map.copyOf(simulation.getArea().getLandscapeEntities());
 
         simulation.nextTurn();
 
+        updateAreaGridLandscape(oldLandscape);
         updateAreaGridCreaturesPositions(oldCreaturesCoordinates);
+    }
+
+    private void updateAreaGridLandscape(Map<Coordinates, LandscapeEntity> oldLandscape) {
+        Map<Coordinates, LandscapeEntity> newLandscape = simulation.getArea().getLandscapeEntities();
+
+        for (Map.Entry<Coordinates, LandscapeEntity> entry : oldLandscape.entrySet()) {
+            if (!newLandscape.containsValue(entry.getValue())) {
+                if (!(entry.getValue() instanceof Ground)) {
+                    areaGrid.getChildren().remove(getAreaGridCellLandscapeImage(entry.getKey().x, entry.getKey().y));
+                } else {
+                    areaGrid.getChildren().remove(getAreaGridCellLandscapeImage(entry.getKey().x, entry.getKey().y));
+                    areaGrid.add(getEntityImage(newLandscape.get(entry.getKey())), entry.getKey().x, entry.getKey().y);
+                }
+            }
+        }
     }
 
     private void updateAreaGridCreaturesPositions(Set<Coordinates> oldCreaturesCoordinates) {
