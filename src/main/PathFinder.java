@@ -49,7 +49,8 @@ public class PathFinder {
                     .get();
 
             if (foodIsNearby(currentNode.coordinates, targetNode.coordinates)) {
-                pathToFood = pavePath(currentNode);
+                targetNode.previousNode = currentNode;
+                pathToFood = pavePath(targetNode);
                 return pathToFood;
             }
 
@@ -98,11 +99,7 @@ public class PathFinder {
             currentNode = currentNode.previousNode;
         }
 
-        if (coordinatesToTarget.size() == 1) {
-            coordinatesToTarget.clear();
-        } else {
-            coordinatesToTarget.removeLast();
-        }
+        coordinatesToTarget.removeLast();
 
         return coordinatesToTarget;
     }
