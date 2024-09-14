@@ -11,6 +11,7 @@ import main.entities.landscape.surface.Ground;
 import main.entities.landscape.surface.Water;
 import main.entities.landscape.static_objects.Tree;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -57,10 +58,19 @@ public class AreaGenerator {
         for (int i = 0; i < entityCount; i++) {
             Coordinates groundCoordinates = getRandomCoordinates(areaGroundCoordinates);
 
-            if (entity instanceof Creature creature) {
-                area.getCreatures().put(groundCoordinates, creature);
-            } else {
-                area.getLandscapeEntities().put(groundCoordinates, (LandscapeEntity) entity);
+            try {
+                if (entity instanceof Creature creature) {
+                    area.getCreatures().put(groundCoordinates, creature);
+                    entity = creature.getClass().getDeclaredConstructor().newInstance();
+                } else {
+                    area.getLandscapeEntities().put(groundCoordinates, (LandscapeEntity) entity);
+                    entity = entity.getClass().getDeclaredConstructor().newInstance();
+                }
+            } catch (IllegalAccessException
+                     | NoSuchMethodException
+                     | InvocationTargetException
+                     | InstantiationException e) {
+                throw new RuntimeException(e);
             }
 
             areaGroundCoordinates.remove(groundCoordinates);
