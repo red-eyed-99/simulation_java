@@ -2,6 +2,7 @@ package main;
 
 import main.entities.creatures.Creature;
 import main.entities.creatures.herbivores.Herbivore;
+import main.entities.creatures.predators.Lion;
 import main.entities.creatures.predators.Predator;
 import main.entities.landscape.LandscapeEntity;
 import main.entities.landscape.food_resources.Grass;
@@ -17,6 +18,7 @@ public class CreaturesAction extends Action {
     private final Area area;
     private final PathFinder pathFinder;
     private final Map<Creature, Stack<Coordinates>> pathsToFood = new HashMap<>();
+    private Map<Coordinates, Creature> updatedCreatures;
 
     public CreaturesAction(Area area) {
         this.area = area;
@@ -26,11 +28,7 @@ public class CreaturesAction extends Action {
     @Override
     public void execute() {
         Map<Coordinates, Creature> creatures = area.getCreatures();
-        Map<Coordinates, Creature> newCreaturesPositions = new HashMap<>(creatures);
-
-        if (pathsToFood.isEmpty()) {
-            setInitialPathToFood(creatures);
-        }
+        updatedCreatures = new HashMap<>(Map.copyOf(creatures));
 
         for (Map.Entry<Coordinates, Creature> entry : creatures.entrySet()) {
             Creature creature = entry.getValue();
@@ -41,61 +39,75 @@ public class CreaturesAction extends Action {
                     if ((pathsToFood.get(creature).size() == 1)) {
                         if (isFoodAvailableToEat(coordinates, creature)) {
                             makeCreatureEat(pathsToFood.get(creature).pop(), creature);
-                            break;
                         } else if (creature instanceof Predator) {
-                            // проверить возможность нанести урон
-                            // нанести урон / искать новый путь
-                            break;
+                            if (isCreatureAvailableToAttack(coordinates)) {
+                                makeCreatureAttack(pathsToFood.get(creature).pop(), coordinates, creature, updatedCreatures);
+                            } else {
+                                setNewPathToFood(coordinates, creature);
+                                makeCreatureMove(coordinates, creature, updatedCreatures);
+                            }
                         } else {
                             setNewPathToFood(coordinates, creature);
-                            makeCreatureMove(coordinates, creature, newCreaturesPositions);
-                            break;
+                            makeCreatureMove(coordinates, creature, updatedCreatures);
                         }
                     } else if (creature instanceof Predator) {
                         setNewPathToFood(coordinates, creature);
-                        makeCreatureMove(coordinates, creature, newCreaturesPositions);
-                        break;
+                        makeCreatureMove(coordinates, creature, updatedCreatures);
                     } else {
-                        makeCreatureMove(coordinates, creature, newCreaturesPositions);
-                        break;
+                        makeCreatureMove(coordinates, creature, updatedCreatures);
                     }
+                    break;
                 case CreatureStatus.IN_SEARCH_FOOD:
                     setNewPathToFood(coordinates, creature);
-                    makeCreatureMove(coordinates, creature, newCreaturesPositions);
+                    makeCreatureMove(coordinates, creature, updatedCreatures);
                     break;
             }
         }
 
-        area.updateCreatures(newCreaturesPositions);
-    }
-
-    private void setInitialPathToFood(Map<Coordinates, Creature> creatures) {
-        for (Map.Entry<Coordinates, Creature> entry : creatures.entrySet()) {
-            pathsToFood.put(entry.getValue(), pathFinder.getPathToFood(entry.getKey(), entry.getValue()));
-            entry.getValue().setStatus(CreatureStatus.MOVE_TO_FOOD);
-        }
+        area.updateCreatures(updatedCreatures);
     }
 
     private void setNewPathToFood(Coordinates coordinates, Creature creature) {
-        pathsToFood.put(creature, pathFinder.getPathToFood(coordinates, creature));
+        Stack<Coordinates> pathToFood = pathFinder.getPathToFood(coordinates, creature);
+        pathsToFood.put(creature, pathToFood);
+
         creature.setStatus(CreatureStatus.MOVE_TO_FOOD);
     }
 
     private void makeCreatureMove(Coordinates coordinates, Creature creature, Map<Coordinates, Creature> newCreaturesPositions) {
-        Coordinates newCoordinates = null;
-        try {
-            newCoordinates = pathsToFood.get(creature).peek();
-        } catch (Exception e) {
-            System.out.println("Creature coordinates: " + coordinates.x + ";" + coordinates.y);
-            System.out.println("Paths to food: " + pathsToFood.entrySet());
-        }
-        if (newCreaturesPositions.containsKey(newCoordinates)) {
-            return; // возможно стоит найти новый путь а не пропускать ход
+        if (pathsToFood.get(creature).isEmpty()) {
+            return;
         }
 
+        Coordinates newCoordinates = pathsToFood.get(creature).peek();
+
+        if (newCreaturesPositions.containsKey(newCoordinates)
+                || !area.getLandscapeEntities().get(newCoordinates).canStep()) {
+            setNewPathToFood(coordinates, creature);
+
+            if (pathsToFood.get(creature).isEmpty()) {
+                return;
+            }
+
+            newCoordinates = pathsToFood.get(creature).peek();
+
+            if (newCreaturesPositions.containsKey(newCoordinates)
+                    || !area.getLandscapeEntities().get(newCoordinates).canStep()) {
+                return;
+            }
+        }
+
+        makeMove(coordinates, creature, newCreaturesPositions);
+    }
+
+    private void makeMove(Coordinates coordinates, Creature creature, Map<Coordinates, Creature> newCreaturesPositions) {
+        if (!newCreaturesPositions.containsKey(coordinates)) {
+            pathsToFood.remove(creature);
+            return;
+        }
         creature.makeMove();
 
-        newCoordinates = pathsToFood.get(creature).pop();
+        Coordinates newCoordinates = pathsToFood.get(creature).pop();
 
         newCreaturesPositions.remove(coordinates);
         newCreaturesPositions.put(newCoordinates, creature);
@@ -104,15 +116,7 @@ public class CreaturesAction extends Action {
     private void makeCreatureEat(Coordinates coordinates, Creature creature) {
         creature.eat();
 
-        LandscapeEntity surfaceType;
-
-        if (area.getLandscapeEntities().get(coordinates) instanceof Ground) {
-            surfaceType = new Ground();
-        } else {
-            surfaceType = new Water();
-        }
-
-        area.getLandscapeEntities().replace(coordinates, surfaceType);
+        area.getLandscapeEntities().replace(coordinates, new Ground());
 
         creature.setStatus(CreatureStatus.IN_SEARCH_FOOD);
     }
@@ -131,6 +135,40 @@ public class CreaturesAction extends Action {
                         ((Math.abs(entityCoordinates.x - coordinates.x) == 1 && entityCoordinates.y == coordinates.y)
                                 || (Math.abs(entityCoordinates.y - coordinates.y) == 1 && entityCoordinates.x == coordinates.x))
                                 && (area.getLandscapeEntities().get(entityCoordinates).getClass() == foodType));
+    }
+
+    private void makeCreatureAttack(Coordinates coordinates, Coordinates coordinatesPredator, Creature creature, Map<Coordinates, Creature> newCreaturesPositions) {
+        Creature creatureToAttack = newCreaturesPositions.get(coordinates);
+
+
+        if (creatureToAttack != null) {
+            creatureToAttack.takeDamage();
+        } else {
+            setNewPathToFood(coordinatesPredator, creature);
+            if (pathsToFood.get(creature).size() == 1) {
+                creatureToAttack = area.getCreatures().get(pathsToFood.get(creature).pop());
+                if (creatureToAttack != null) {
+                    creatureToAttack.takeDamage();
+                }
+            }
+            makeCreatureMove(coordinatesPredator, creature, newCreaturesPositions);
+            return;
+        }
+
+        if (creatureToAttack.getHealthPoint() == 0) {
+            newCreaturesPositions.remove(coordinates);
+            area.getLandscapeEntities().replace(coordinates, new Meat());
+        }
+
+        creature.setStatus(CreatureStatus.IN_SEARCH_FOOD);
+    }
+
+    private boolean isCreatureAvailableToAttack(Coordinates coordinates) {
+        return updatedCreatures.keySet().stream()
+                .anyMatch(entityCoordinates ->
+                        ((Math.abs(entityCoordinates.x - coordinates.x) == 1 && entityCoordinates.y == coordinates.y)
+                                || (Math.abs(entityCoordinates.y - coordinates.y) == 1 && entityCoordinates.x == coordinates.x))
+                                && (area.getCreatures().get(entityCoordinates) instanceof Herbivore));
     }
 }
 

@@ -8,11 +8,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class Creature extends Entity {
-    private int healthPoint;
+    private int healthPoint = 1;
     private int moveSpeed = 2;
     private int runSpeed;
 
-    private CreatureStatus status;
+    private CreatureStatus status = CreatureStatus.IN_SEARCH_FOOD;
 
     public CreatureViewDirection viewDirection = CreatureViewDirection.RIGHT;
 
@@ -22,6 +22,12 @@ public abstract class Creature extends Entity {
 
     public void eat() {
 
+    }
+
+    public void takeDamage() {
+        if (healthPoint > 0) {
+            healthPoint--;
+        }
     }
 
     public int getMoveSpeed() {
@@ -34,5 +40,9 @@ public abstract class Creature extends Entity {
 
     public void setStatus(CreatureStatus status) {
         this.status = status;
+    }
+
+    public int getHealthPoint() {
+        return healthPoint;
     }
 }
