@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class AreaGenerator {
     private final Area area;
     private final Random random = new Random();
-    private final List<Coordinates> areaGroundCoordinates;
+    private List<Coordinates> areaGroundCoordinates;
 
     public AreaGenerator(Area area) {
         this.area = area;
@@ -52,29 +52,52 @@ public class AreaGenerator {
         return area;
     }
 
-    private void generateEntity(Entity entity) {
-        int entityCount = (int) (area.getLandscapeEntities().size() * EntityGenerationMultipliers.getMultiplier(entity.getClass()));
+    public void generateEntity(Entity entity) {
+        updateAreaGroundCoordinates();
+
+        int entityCount = getEntityCountToGenerate(entity);
 
         for (int i = 0; i < entityCount; i++) {
             Coordinates groundCoordinates = getRandomCoordinates(areaGroundCoordinates);
 
-            try {
-                if (entity instanceof Creature creature) {
-                    area.getCreatures().put(groundCoordinates, creature);
-                    entity = creature.getClass().getDeclaredConstructor().newInstance();
-                } else {
-                    area.getLandscapeEntities().put(groundCoordinates, (LandscapeEntity) entity);
-                    entity = entity.getClass().getDeclaredConstructor().newInstance();
+            int tryCount = 0;
+
+            while (creatureDetected(groundCoordinates)) {
+                groundCoordinates = getRandomCoordinates(areaGroundCoordinates);
+                tryCount++;
+
+                if (tryCount > 3) {
+                    return;
                 }
-            } catch (IllegalAccessException
-                     | NoSuchMethodException
-                     | InvocationTargetException
-                     | InstantiationException e) {
-                throw new RuntimeException(e);
             }
 
-            areaGroundCoordinates.remove(groundCoordinates);
+            entity = placeEntity(entity, groundCoordinates);
         }
+    }
+
+    private boolean creatureDetected(Coordinates coordinates) {
+        return area.getCreatures().containsKey(coordinates);
+    }
+
+    private Entity placeEntity(Entity entity, Coordinates coordinates) {
+        try {
+            if (entity instanceof Creature creature) {
+                area.getCreatures().put(coordinates, creature);
+                entity = creature.getClass().getDeclaredConstructor().newInstance();
+            } else {
+                area.getLandscapeEntities().put(coordinates, (LandscapeEntity) entity);
+                entity = entity.getClass().getDeclaredConstructor().newInstance();
+            }
+        } catch (IllegalAccessException
+                 | NoSuchMethodException
+                 | InvocationTargetException
+                 | InstantiationException e) {
+            throw new RuntimeException(e);
+        }
+
+        areaGroundCoordinates.remove(coordinates);
+
+        return entity;
     }
 
     private void generateGround() {
@@ -147,7 +170,7 @@ public class AreaGenerator {
 
     private List<Coordinates> updateWaterNearGroundCoordinates(List<Coordinates> waterNearGroundCoordinates) {
         return waterNearGroundCoordinates.stream()
-                .filter(entityCoordinates -> !getNearbyGroundCoordinates(entityCoordinates).isEmpty())
+                .filter(coordinates -> !getNearbyGroundCoordinates(coordinates).isEmpty())
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -161,6 +184,18 @@ public class AreaGenerator {
                         || (Math.abs(entityCoordinates.y - coordinates.y) == 1 && entityCoordinates.x == coordinates.x))
                         && (area.getLandscapeEntities().get(entityCoordinates) instanceof Ground))
                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private void updateAreaGroundCoordinates() {
+        areaGroundCoordinates = area.getLandscapeEntities().keySet().stream()
+                .filter(coordinates -> area.getLandscapeEntities().get(coordinates) instanceof Ground)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private int getEntityCountToGenerate(Entity entity) {
+        double multiplier = EntityGenerationMultipliers.getMultiplier(entity.getClass());
+
+        return (int) (area.getLandscapeEntities().size() * multiplier);
     }
 }
 
