@@ -3,6 +3,7 @@ package main;
 import main.entities.creatures.Creature;
 import main.entities.creatures.herbivores.Herbivore;
 import main.entities.landscape.food_resources.Grass;
+import main.entities.landscape.food_resources.Meat;
 import main.entities.landscape.surface.Water;
 
 import java.util.*;
@@ -115,6 +116,10 @@ public class PathFinder {
             foodCoordinatesList = area.getCreatures().keySet().stream()
                     .filter(creatureCoordinates -> area.getCreatures().get(creatureCoordinates) instanceof Herbivore)
                     .collect(Collectors.toCollection(ArrayList::new));
+
+            area.getLandscapeEntities().keySet().stream()
+                    .filter(entityCoordinates -> area.getLandscapeEntities().get(entityCoordinates) instanceof Meat)
+                    .forEach(foodCoordinatesList::add);
         }
 
         Coordinates nearFoodCoordinates = foodCoordinatesList.getFirst();
