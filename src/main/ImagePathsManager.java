@@ -34,7 +34,7 @@ public class ImagePathsManager {
         LANDSCAPE_PATHS_TO_IMAGE.put(Tree.class, "/main/ui/images/landscape/tree.png");
         LANDSCAPE_PATHS_TO_IMAGE.put(Rock.class, "/main/ui/images/landscape/rock.png");
         LANDSCAPE_PATHS_TO_IMAGE.put(Grass.class, "/main/ui/images/landscape/grass.png");
-        LANDSCAPE_PATHS_TO_IMAGE.put(Meat.class, "/main/ui/images/meat.png");
+        LANDSCAPE_PATHS_TO_IMAGE.put(Meat.class, "/main/ui/images/landscape/meat.png");
     }
 
     private static void setCreatureImagePaths() {
