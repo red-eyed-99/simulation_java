@@ -13,10 +13,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        AreaGenerator generator = new AreaGenerator(new Area(10));
-        Area area = generator.generateArea();
+        AreaGenerator areaGenerator = new AreaGenerator(new Area(10));
+        Area area = areaGenerator.generateArea();
 
-        Simulation simulation = new Simulation(area);
+        Simulation simulation = new Simulation(area, areaGenerator);
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/main/ui/layouts/Main.fxml"));
 
