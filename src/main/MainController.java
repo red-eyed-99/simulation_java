@@ -15,6 +15,7 @@ import main.entities.landscape.LandscapeEntity;
 import main.entities.landscape.food_resources.Meat;
 import main.entities.landscape.surface.Ground;
 import main.entities.landscape.surface.Surface;
+import main.entities.landscape.surface.Water;
 import main.ui.custom_controls.ZoomableScrollPane;
 
 import java.util.*;
@@ -156,16 +157,19 @@ public class MainController implements SimulationObserver {
     }
 
     @Override
-    public void onAreaCreaturesUpdated(Map<Coordinates, Creature> oldCreatures) {
+    public void onAreaCreaturesUpdated(Map<Coordinates, Creature> oldCreatures, Map<Coordinates, LandscapeEntity> oldLandscape) {
         Map<Coordinates, Creature> newCreatures = new HashMap<>(simulation.getArea().getCreatures());
 
-        removeOutdatedCreaturesImages(newCreatures, oldCreatures);
+        removeOutdatedCreaturesImages(newCreatures, oldCreatures, oldLandscape);
 
         addCurrentCreaturesImages(newCreatures);
     }
 
 
-    private void removeOutdatedCreaturesImages(Map<Coordinates, Creature> newCreatures, Map<Coordinates, Creature> oldCreatures) {
+    private void removeOutdatedCreaturesImages(
+            Map<Coordinates, Creature> newCreatures,
+            Map<Coordinates, Creature> oldCreatures,
+            Map<Coordinates, LandscapeEntity> oldLandscape) {
         for (Map.Entry<Coordinates, Creature> entry : oldCreatures.entrySet()) {
             Creature oldCreature = entry.getValue();
             Coordinates oldCoordinates = entry.getKey();
@@ -174,12 +178,15 @@ public class MainController implements SimulationObserver {
 
             if (!newCreatures.containsKey(oldCoordinates)) {
                 if (simulation.getArea().getLandscapeEntities().get(oldCoordinates) instanceof Meat) {
-                    oldCreatureImageView = getAreaGridCellLandscapeImage(oldCoordinates.x, oldCoordinates.y, 0);
+                    if (oldLandscape.get(oldCoordinates) instanceof Water) {
+                        oldCreatureImageView = getAreaGridCellLandscapeImage(oldCoordinates.x, oldCoordinates.y, 1);
+                    } else {
+                        oldCreatureImageView = getAreaGridCellLandscapeImage(oldCoordinates.x, oldCoordinates.y, 0);
+                    }
                 } else {
                     oldCreatureImageView = getAreaGridCellCreatureImage(oldCoordinates.x, oldCoordinates.y);
                 }
                 areaGrid.getChildren().remove(oldCreatureImageView);
-
             } else if (newCreatures.get(oldCoordinates) != oldCreature) {
                 oldCreatureImageView = getAreaGridCellCreatureImage(oldCoordinates.x, oldCoordinates.y);
                 areaGrid.getChildren().remove(oldCreatureImageView);

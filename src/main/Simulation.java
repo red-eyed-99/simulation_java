@@ -33,8 +33,8 @@ public class Simulation {
         observer.onAreaLandscapeUpdated(oldLandscape);
     }
 
-    private void notifyCreaturesUpdated(Map<Coordinates, Creature> oldCreatures) {
-        observer.onAreaCreaturesUpdated(oldCreatures);
+    private void notifyCreaturesUpdated(Map<Coordinates, Creature> oldCreatures, Map<Coordinates, LandscapeEntity> oldLandscape) {
+        observer.onAreaCreaturesUpdated(oldCreatures, oldLandscape);
     }
 
     private void setActions() {
@@ -58,7 +58,7 @@ public class Simulation {
         turnActions.get(1).execute();
         turnActions.get(0).execute();
         notifyLandscapeUpdated(oldLandscape);
-        notifyCreaturesUpdated(oldCreatures);
+        notifyCreaturesUpdated(oldCreatures, oldLandscape);
     }
 
 
