@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 public class PathFinder {
     private final Area area;
+    private Map<Coordinates, Creature> creatures;
 
     public PathFinder(Area area) {
         this.area = area;
@@ -29,6 +30,10 @@ public class PathFinder {
         int getExpectedFullPathLength() {
             return pathLengthFromStart + approximatePathLength;
         }
+    }
+
+    public void updateCreatures(Map<Coordinates, Creature> updatedCreatures) {
+        this.creatures = updatedCreatures;
     }
 
     public Stack<Coordinates> getPathToFood(Coordinates creatureCoordinates, Creature creature) {
@@ -108,16 +113,18 @@ public class PathFinder {
     private Coordinates getNearFoodCoordinates(Coordinates coordinates, Creature creature) {
         List<Coordinates> foodCoordinatesList;
 
+        Set<Coordinates> landscapeEntitiesCoordinates = area.getLandscapeEntities().keySet();
+
         if (creature instanceof Herbivore) {
-            foodCoordinatesList = area.getLandscapeEntities().keySet().stream()
+            foodCoordinatesList = landscapeEntitiesCoordinates.stream()
                     .filter(entityCoordinates -> area.getLandscapeEntities().get(entityCoordinates) instanceof Grass)
                     .collect(Collectors.toCollection(ArrayList::new));
         } else {
-            foodCoordinatesList = area.getCreatures().keySet().stream()
-                    .filter(creatureCoordinates -> area.getCreatures().get(creatureCoordinates) instanceof Herbivore)
+            foodCoordinatesList = creatures.keySet().stream()
+                    .filter(creatureCoordinates -> creatures.get(creatureCoordinates) instanceof Herbivore)
                     .collect(Collectors.toCollection(ArrayList::new));
 
-            area.getLandscapeEntities().keySet().stream()
+            landscapeEntitiesCoordinates.stream()
                     .filter(entityCoordinates -> area.getLandscapeEntities().get(entityCoordinates) instanceof Meat)
                     .forEach(foodCoordinatesList::add);
         }
