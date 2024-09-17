@@ -136,6 +136,11 @@ public class MainController implements SimulationObserver {
         simulation.startSimulation();
     }
 
+    @FXML
+    private void pauseSimulationButtonClick(ActionEvent event) {
+        simulation.pauseSimulation();
+    }
+
     @Override
     public void onAreaLandscapeUpdated(Map<Coordinates, LandscapeEntity> oldLandscape) {
         Map<Coordinates, LandscapeEntity> newLandscape = simulation.getArea().getLandscapeEntities();
