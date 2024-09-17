@@ -2,8 +2,10 @@ package main;
 
 import main.entities.Entity;
 import main.entities.creatures.Creature;
+import main.entities.creatures.herbivores.Herbivore;
 import main.entities.creatures.herbivores.Ostrich;
 import main.entities.creatures.predators.Lion;
+import main.entities.creatures.predators.Predator;
 import main.entities.landscape.LandscapeEntity;
 import main.entities.landscape.food_resources.Grass;
 import main.entities.landscape.static_objects.Rock;
@@ -62,11 +64,11 @@ public class AreaGenerator {
 
             int tryCount = 0;
 
-            while (creatureDetected(groundCoordinates)) {
+            while (creatureDetected(groundCoordinates, entity)) {
                 groundCoordinates = getRandomCoordinates(areaGroundCoordinates);
                 tryCount++;
 
-                if (tryCount > 3) {
+                if (tryCount >= 3) {
                     return;
                 }
             }
@@ -75,7 +77,11 @@ public class AreaGenerator {
         }
     }
 
-    private boolean creatureDetected(Coordinates coordinates) {
+    private boolean creatureDetected(Coordinates coordinates, Entity entity) {
+        if (entity instanceof Herbivore) {
+            return area.getCreatures().containsKey(coordinates) || isPredatorNearby(coordinates);
+        }
+
         return area.getCreatures().containsKey(coordinates);
     }
 
@@ -196,6 +202,13 @@ public class AreaGenerator {
         double multiplier = EntityGenerationMultipliers.getMultiplier(entity.getClass());
 
         return (int) (area.getLandscapeEntities().size() * multiplier);
+    }
+
+    private boolean isPredatorNearby(Coordinates coordinates) {
+        return area.getCreatures().keySet().stream()
+                .anyMatch(creatureCoordinates -> ((Math.abs(creatureCoordinates.x - coordinates.x) == 1 && creatureCoordinates.y == coordinates.y)
+                        || (Math.abs(creatureCoordinates.y - coordinates.y) == 1 && creatureCoordinates.x == coordinates.x))
+                        && (area.getCreatures().get(creatureCoordinates) instanceof Predator));
     }
 }
 
