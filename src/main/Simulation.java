@@ -1,12 +1,13 @@
 package main;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import main.entities.creatures.Creature;
 import main.entities.landscape.LandscapeEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class Simulation {
     private int movesCount = 0;
@@ -18,11 +19,20 @@ public class Simulation {
 
     private SimulationObserver observer;
 
+    private Map<Coordinates, LandscapeEntity> landscapeBeforeRedraw;
+    private Map<Coordinates, Creature> creaturesBeforeRedraw;
+
+    SimulationThread simulationThread;
+
     public Simulation(Area area, AreaGenerator areaGenerator) {
         this.area = area;
         this.areaGenerator = areaGenerator;
 
         setActions();
+        updateEntitiesBeforeRedraw();
+        simulationThread = new SimulationThread();
+        simulationThread.setDaemon(true);
+
     }
 
     public void addObserver(SimulationObserver observer) {
@@ -42,36 +52,78 @@ public class Simulation {
         turnActions.add(new AddEntityAction(area, areaGenerator));
     }
 
-    public int getMovesCount() {
-        return movesCount;
-    }
-
     public Area getArea() {
         return area;
     }
 
     public void nextTurn() {
-        Map<Coordinates, LandscapeEntity> oldLandscape = Map.copyOf(area.getLandscapeEntities());
-
-        Map<Coordinates, Creature> oldCreatures = Map.copyOf(area.getCreatures());
-
         turnActions.get(1).execute();
-        notifyLandscapeUpdated(oldLandscape);
-        notifyCreaturesUpdated(oldCreatures, oldLandscape);
-        oldLandscape = Map.copyOf(area.getLandscapeEntities());
-        oldCreatures = Map.copyOf(area.getCreatures());
+        notifyObserverForRedraw();
+        updateEntitiesBeforeRedraw();
 
         turnActions.get(0).execute();
-        notifyLandscapeUpdated(oldLandscape);
-        notifyCreaturesUpdated(oldCreatures, oldLandscape);
+        notifyObserverForRedraw();
+        updateEntitiesBeforeRedraw();
     }
 
-
     public void startSimulation() {
-
+        simulationThread.start();
     }
 
     public void pauseSimulation() {
-
+        simulationThread.pause();
     }
+
+    private void updateEntitiesBeforeRedraw() {
+        landscapeBeforeRedraw = Map.copyOf(area.getLandscapeEntities());
+        creaturesBeforeRedraw = Map.copyOf(area.getCreatures());
+    }
+
+    private void notifyObserverForRedraw() {
+        notifyLandscapeUpdated(landscapeBeforeRedraw);
+        notifyCreaturesUpdated(creaturesBeforeRedraw, landscapeBeforeRedraw);
+    }
+
+    class SimulationThread extends Thread {
+        @Override
+        public void run() {
+            simulationTask.run();
+        }
+
+        public void pause() {
+            simulationTask.cancel();
+//            try {
+//                sleep(900000);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+        }
+    }
+
+    Task<Void> simulationTask = new Task<>() {
+        @Override
+        protected Void call() throws Exception {
+            while (true) {
+                turnActions.get(1).execute();
+
+                Platform.runLater(() -> {
+                    notifyObserverForRedraw();
+                });
+
+                Thread.sleep(100);
+
+                updateEntitiesBeforeRedraw();
+
+                turnActions.get(0).execute();
+
+                Platform.runLater(() -> {
+                    notifyObserverForRedraw();
+                });
+
+                Thread.sleep(500);
+
+                updateEntitiesBeforeRedraw();
+            }
+        }
+    };
 }
