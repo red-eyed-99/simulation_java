@@ -103,7 +103,7 @@ public class ImagePathsManager {
     public static String getEntityImagePath(Entity entity) {
         if (entity instanceof Creature creature) {
             Map<CreatureViewDirection, String> imagePaths = CREATURE_PATHS_TO_IMAGE.get(entity.getClass());
-            return imagePaths.get(creature.viewDirection);
+            return imagePaths.get(creature.getViewDirection());
         }
 
         return LANDSCAPE_PATHS_TO_IMAGE.get(entity.getClass());
