@@ -56,6 +56,11 @@ public class Simulation {
         Map<Coordinates, Creature> oldCreatures = Map.copyOf(area.getCreatures());
 
         turnActions.get(1).execute();
+        notifyLandscapeUpdated(oldLandscape);
+        notifyCreaturesUpdated(oldCreatures, oldLandscape);
+        oldLandscape = Map.copyOf(area.getLandscapeEntities());
+        oldCreatures = Map.copyOf(area.getCreatures());
+
         turnActions.get(0).execute();
         notifyLandscapeUpdated(oldLandscape);
         notifyCreaturesUpdated(oldCreatures, oldLandscape);

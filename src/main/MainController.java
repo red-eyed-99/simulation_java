@@ -144,7 +144,7 @@ public class MainController implements SimulationObserver {
             LandscapeEntity newLandscapeEntity = entry.getValue();
             LandscapeEntity oldLandscapeEntity = oldLandscape.get(entry.getKey());
 
-            if (newLandscapeEntity != oldLandscapeEntity) {
+            if (newLandscapeEntity.getClass() != oldLandscapeEntity.getClass()) {
                 ImageView entityImageView;
                 Coordinates entityCoordinates = entry.getKey();
 
@@ -175,6 +175,7 @@ public class MainController implements SimulationObserver {
             Map<Coordinates, Creature> newCreatures,
             Map<Coordinates, Creature> oldCreatures,
             Map<Coordinates, LandscapeEntity> oldLandscape) {
+
         for (Map.Entry<Coordinates, Creature> entry : oldCreatures.entrySet()) {
             Creature oldCreature = entry.getValue();
             Coordinates oldCoordinates = entry.getKey();
