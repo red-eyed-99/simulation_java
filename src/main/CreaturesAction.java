@@ -14,8 +14,11 @@ import java.util.Stack;
 
 public class CreaturesAction extends Action {
     private final Area area;
+
     private final PathFinder pathFinder;
     private final Map<Creature, Stack<Coordinates>> pathsToFood = new HashMap<>();
+    private final Map<Creature, Integer> pathNotFoundCreatures = new HashMap<>();
+
     private Map<Coordinates, Creature> updatedCreatures;
 
     public CreaturesAction(Area area) {
@@ -50,6 +53,8 @@ public class CreaturesAction extends Action {
                     setNewPathToFood(coordinates, creature);
                     performCreatureAction(coordinates, creature);
                     break;
+                case CreatureStatus.BLOCKED:
+                    updatedCreatures.remove(coordinates);
             }
         }
 
@@ -90,12 +95,21 @@ public class CreaturesAction extends Action {
 
     private void setNewPathToFood(Coordinates coordinates, Creature creature) {
         pathFinder.updateCreatures(updatedCreatures);
+
         Stack<Coordinates> pathToFood = pathFinder.getPathToFood(coordinates, creature);
         pathsToFood.put(creature, pathToFood);
 
         if (!pathNotFound(creature)) {
+            pathNotFoundCreatures.remove(creature);
             creature.setStatus(CreatureStatus.MOVE_TO_FOOD);
         } else {
+            pathNotFoundCreatures.put(creature, pathNotFoundCreatures.getOrDefault(creature, 0) + 1);
+
+            if (creatureBlocked(creature)) {
+                creature.setStatus(CreatureStatus.BLOCKED);
+                return;
+            }
+
             creature.setStatus(CreatureStatus.IN_SEARCH_FOOD);
         }
 
@@ -108,12 +122,16 @@ public class CreaturesAction extends Action {
         // debug
     }
 
+    private boolean creatureBlocked(Creature creature) {
+        return pathNotFoundCreatures.get(creature) >= 6;
+    }
+
     private void makeCreatureMove(Coordinates coordinates, Creature creature) {
         if (creatureAlreadyDead(coordinates)) {
             // debug
             System.out.println("существо метров, движение невозможно");
             //debug
-
+            pathNotFoundCreatures.remove(creature);
             pathsToFood.remove(creature);
             return;
         }
