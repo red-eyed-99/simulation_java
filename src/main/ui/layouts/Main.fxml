@@ -33,6 +33,12 @@
             fx:id="nextTurnButton"
             GridPane.rowIndex="1"
             GridPane.columnIndex="1"
-            text="Next Turn"
+            text="Next turn"
             onAction="#nextTurnButtonClick"/>
+    <Button
+            fx:id="startSimulationButton"
+            GridPane.rowIndex="1"
+            GridPane.columnIndex="1"
+            text="Start simulation"
+            onAction="#startSimulationButtonClick"/>
 </GridPane>
