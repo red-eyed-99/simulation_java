@@ -39,7 +39,13 @@ public class PathFinder {
     public Stack<Coordinates> getPathToFood(Coordinates creatureCoordinates, Creature creature) {
         Stack<Coordinates> pathToFood = new Stack<>();
 
-        PathNode targetNode = new PathNode(getNearFoodCoordinates(creatureCoordinates, creature));
+        PathNode targetNode;
+
+        try {
+            targetNode = new PathNode(getNearFoodCoordinates(creatureCoordinates, creature));
+        } catch (NoSuchElementException e) {
+            return pathToFood;
+        }
 
         Set<PathNode> checkedNodes = new HashSet<>();
         Set<PathNode> nodesForCheck = new HashSet<>();
