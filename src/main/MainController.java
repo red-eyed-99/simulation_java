@@ -101,7 +101,7 @@ public class MainController implements SimulationObserver {
         return new ImageView(image);
     }
 
-    private ImageView getAreaGridCellLandscapeImage(int col, int row) {
+    private ImageView getAreaGridCellImage(int col, int row) {
         List<ImageView> images = new ArrayList<>();
 
         for (Node node : areaGrid.getChildren()) {
@@ -116,10 +116,10 @@ public class MainController implements SimulationObserver {
             return images.getLast();
         }
 
-        throw new NoSuchElementException("Landscape ImageView could not be found at the given coordinates");
+        throw new NoSuchElementException("Landscape ImageView could not found by given coordinates");
     }
 
-    private ImageView getAreaGridCellLandscapeImage(int col, int row, int zIndex) {
+    private ImageView getAreaGridCellImage(int col, int row, int zIndex) {
         List<ImageView> images = new ArrayList<>();
 
         for (Node node : areaGrid.getChildren()) {
@@ -137,23 +137,6 @@ public class MainController implements SimulationObserver {
         throw new NoSuchElementException("Landscape ImageView could not be found at the given coordinates");
     }
 
-    private ImageView getAreaGridCellCreatureImage(int col, int row) {
-        List<ImageView> images = new ArrayList<>();
-
-        for (Node node : areaGrid.getChildren()) {
-            if (node instanceof ImageView imageView
-                    && GridPane.getColumnIndex(node) == col
-                    && GridPane.getRowIndex(node) == row) {
-                images.add(imageView);
-            }
-        }
-
-        if (!images.isEmpty()) {
-            return images.getLast();
-        }
-
-        throw new NoSuchElementException("Landscape ImageView could not found by given coordinates");
-    }
 
 
     @Override
@@ -173,7 +156,7 @@ public class MainController implements SimulationObserver {
 
                     areaGrid.add(entityImageView, entityCoordinates.x, entityCoordinates.y);
                 } else {
-                    entityImageView = getAreaGridCellLandscapeImage(entityCoordinates.x, entityCoordinates.y);
+                    entityImageView = getAreaGridCellImage(entityCoordinates.x, entityCoordinates.y);
 
                     areaGrid.getChildren().remove(entityImageView);
                 }
@@ -204,16 +187,16 @@ public class MainController implements SimulationObserver {
             if (!newCreatures.containsKey(oldCoordinates)) {
                 if (simulation.getArea().getLandscapeEntities().get(oldCoordinates) instanceof Meat) {
                     if (oldLandscape.get(oldCoordinates) instanceof Water) {
-                        oldCreatureImageView = getAreaGridCellLandscapeImage(oldCoordinates.x, oldCoordinates.y, 1);
+                        oldCreatureImageView = getAreaGridCellImage(oldCoordinates.x, oldCoordinates.y, 1);
                     } else {
-                        oldCreatureImageView = getAreaGridCellLandscapeImage(oldCoordinates.x, oldCoordinates.y, 0);
+                        oldCreatureImageView = getAreaGridCellImage(oldCoordinates.x, oldCoordinates.y, 0);
                     }
                 } else {
-                    oldCreatureImageView = getAreaGridCellCreatureImage(oldCoordinates.x, oldCoordinates.y);
+                    oldCreatureImageView = getAreaGridCellImage(oldCoordinates.x, oldCoordinates.y);
                 }
                 areaGrid.getChildren().remove(oldCreatureImageView);
             } else if (newCreatures.get(oldCoordinates) != oldCreature) {
-                oldCreatureImageView = getAreaGridCellCreatureImage(oldCoordinates.x, oldCoordinates.y);
+                oldCreatureImageView = getAreaGridCellImage(oldCoordinates.x, oldCoordinates.y);
                 areaGrid.getChildren().remove(oldCreatureImageView);
             } else {
                 newCreatures.remove(oldCoordinates); // avoid duplicate in next method
