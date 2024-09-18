@@ -7,6 +7,7 @@ import main.entities.landscape.LandscapeEntity;
 import main.entities.landscape.food_resources.Grass;
 import main.entities.landscape.food_resources.Meat;
 import main.entities.landscape.surface.Ground;
+import main.entities.landscape.surface.Water;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -211,7 +212,13 @@ public class CreaturesAction extends Action {
     private void makeCreatureEat(Coordinates coordinates, Creature creature) {
         creature.eat();
 
-        area.getLandscapeEntities().replace(coordinates, new Ground());
+        if (area.getWaterCoordinates().contains(foodCoordinates)) {
+            area.getLandscapeEntities().replace(foodCoordinates, new Water());
+        } else {
+            area.getLandscapeEntities().replace(foodCoordinates, new Ground());
+        }
+
+        creature.changeViewDirection(creatureCoordinates.x, foodCoordinates.x);
 
         creature.setStatus(CreatureStatus.IN_SEARCH_FOOD);
 

@@ -20,7 +20,9 @@ import java.util.stream.Collectors;
 public class AreaGenerator {
     private final Area area;
     private final Random random = new Random();
+
     private List<Coordinates> areaGroundCoordinates;
+    private final Set<Coordinates> areaWaterCoordinates = new HashSet<>();
 
     public AreaGenerator(Area area) {
         this.area = area;
@@ -126,6 +128,8 @@ public class AreaGenerator {
 
             placeWaterSurface(waterSourceCoordinates, randomWaterSize);
         }
+
+        area.setWaterCoordinates(areaWaterCoordinates);
     }
 
     private Coordinates getRandomWaterSourceCoordinates() {
@@ -154,6 +158,7 @@ public class AreaGenerator {
     private void placeWaterSource(Coordinates waterSource) {
         area.getLandscapeEntities().replace(waterSource, new Water());
         areaGroundCoordinates.remove(waterSource);
+        areaWaterCoordinates.add(waterSource);
     }
 
     private void fillSurfaceWithWater(List<Coordinates> waterNearGroundCoordinates, int waterSize) {
@@ -171,6 +176,7 @@ public class AreaGenerator {
             waterNearGroundCoordinates.add(groundCoordinates);
 
             areaGroundCoordinates.remove(groundCoordinates);
+            areaWaterCoordinates.add(groundCoordinates);
         }
     }
 

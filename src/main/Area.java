@@ -11,6 +11,7 @@ public class Area {
     public final int size;
 
     private final Map<Coordinates, LandscapeEntity> landscapeEntities;
+    private Set<Coordinates> waterCoordinates;
     private Map<Coordinates, Creature> creatures = new HashMap<>();
 
     public Area(int size) {
@@ -37,5 +38,13 @@ public class Area {
 
     public Map<Coordinates, LandscapeEntity> getLandscapeEntities() {
         return landscapeEntities;
+    }
+
+    public Set<Coordinates> getWaterCoordinates() {
+        return waterCoordinates;
+    }
+
+    public void setWaterCoordinates(Set<Coordinates> waterCoordinates) {
+        this.waterCoordinates = waterCoordinates;
     }
 }
