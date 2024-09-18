@@ -2,10 +2,8 @@ package main;
 
 import main.entities.Entity;
 import main.entities.creatures.Creature;
-import main.entities.creatures.herbivores.Herbivore;
-import main.entities.creatures.herbivores.Ostrich;
-import main.entities.creatures.predators.Lion;
-import main.entities.creatures.predators.Predator;
+import main.entities.creatures.herbivores.*;
+import main.entities.creatures.predators.*;
 import main.entities.landscape.LandscapeEntity;
 import main.entities.landscape.food_resources.Grass;
 import main.entities.landscape.static_objects.Rock;
@@ -42,16 +40,16 @@ public class AreaGenerator {
         // creatures
 
         // herbivores
-        //generateEntity(new Elephant());
-        //generateEntity(new Girafee());
-        generateEntity(new Ostrich());
-        //generateEntity(new Rhino());
+        generateEntity(new Elephant(6, 1));
+        generateEntity(new Ostrich(3, 3));
+        generateEntity(new Antelope(3, 3));
+        generateEntity(new Zebra(4, 2));
+        generateEntity(new Buffalo(4, 2));
 
         // predators
-        //generateEntity(new Crocodile());
-        generateEntity(new Lion());
-        //generateEntity(new Panther());
-        //generateEntity(new Tiger());
+        generateEntity(new Lion(4, 2));
+        generateEntity(new Panther(3, 2));
+        generateEntity(new Tiger(3, 2));
 
         return area;
     }
@@ -91,7 +89,8 @@ public class AreaGenerator {
         try {
             if (entity instanceof Creature creature) {
                 area.getCreatures().put(coordinates, creature);
-                entity = creature.getClass().getDeclaredConstructor().newInstance();
+                entity = creature.getClass().getConstructor(Integer.TYPE, Integer.TYPE)
+                        .newInstance(creature.getHealthPoint(), creature.getMoveSpeed());
             } else {
                 area.getLandscapeEntities().put(coordinates, (LandscapeEntity) entity);
                 entity = entity.getClass().getDeclaredConstructor().newInstance();
