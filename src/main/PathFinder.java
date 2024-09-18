@@ -216,7 +216,8 @@ public class PathFinder {
                 continue;
             }
 
-            if (area.getLandscapeOrCreature(currentCheckNode.coordinates).canStep()) {
+            if (area.getLandscapeEntities().get(currentCheckNode.coordinates).canStep()
+                    && !creatures.containsKey(currentCheckNode.coordinates)) {
                 availableNodes.add(currentCheckNode);
             } else if (i < 0) {
                 availableNodes.clear();
@@ -242,7 +243,8 @@ public class PathFinder {
                 continue;
             }
 
-            if (area.getLandscapeOrCreature(currentCheckNode.coordinates).canStep()) {
+            if (area.getLandscapeEntities().get(currentCheckNode.coordinates).canStep()
+                    && !creatures.containsKey(currentCheckNode.coordinates)) {
                 availableNodes.add(currentCheckNode);
             } else if (i < 0) {
                 availableNodes.clear();
