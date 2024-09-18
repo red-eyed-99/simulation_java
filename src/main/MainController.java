@@ -33,8 +33,37 @@ public class MainController implements SimulationObserver {
     private Button nextTurnButton;
 
     @FXML
+    private Button startSimulationButton;
+
+    @FXML
+    private Button pauseSimulationButton;
+
+    @FXML
     private void initialize() {
         zoomableScrollPane.setZoomableTarget(areaGrid);
+    }
+
+    @FXML
+    private void nextTurnButtonClick(ActionEvent event) {
+        simulation.nextTurn();
+    }
+
+    @FXML
+    private void startSimulationButtonClick(ActionEvent event) {
+        startSimulationButton.setDisable(true);
+        nextTurnButton.setDisable(true);
+        pauseSimulationButton.setDisable(false);
+
+        simulation.startSimulation();
+    }
+
+    @FXML
+    private void pauseSimulationButtonClick(ActionEvent event) {
+        startSimulationButton.setDisable(false);
+        nextTurnButton.setDisable(false);
+        pauseSimulationButton.setDisable(true);
+
+        simulation.pauseSimulation();
     }
 
     public void setSimulation(Simulation simulation) {
@@ -123,23 +152,9 @@ public class MainController implements SimulationObserver {
             return images.getLast();
         }
 
-        throw new NoSuchElementException("Landscape ImageView could not be found at the given coordinates");
+        throw new NoSuchElementException("Landscape ImageView could not found by given coordinates");
     }
 
-    @FXML
-    private void nextTurnButtonClick(ActionEvent event) {
-        simulation.nextTurn();
-    }
-
-    @FXML
-    private void startSimulationButtonClick(ActionEvent event) {
-        simulation.startSimulation();
-    }
-
-    @FXML
-    private void pauseSimulationButtonClick(ActionEvent event) {
-        simulation.pauseSimulation();
-    }
 
     @Override
     public void onAreaLandscapeUpdated(Map<Coordinates, LandscapeEntity> oldLandscape) {
@@ -174,7 +189,6 @@ public class MainController implements SimulationObserver {
 
         addCurrentCreaturesImages(newCreatures);
     }
-
 
     private void removeOutdatedCreaturesImages(
             Map<Coordinates, Creature> newCreatures,

@@ -47,6 +47,7 @@
                 GridPane.rowIndex="1"
                 GridPane.columnIndex="1"
                 text="Pause simulation"
+                disable="true"
                 onAction="#pauseSimulationButtonClick"/>
     </HBox>
 </GridPane>
