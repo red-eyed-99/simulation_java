@@ -7,9 +7,9 @@ import main.entities.creatures.predators.*;
 import main.entities.landscape.LandscapeEntity;
 import main.entities.landscape.food_resources.Grass;
 import main.entities.landscape.static_objects.Rock;
+import main.entities.landscape.static_objects.Tree;
 import main.entities.landscape.surface.Ground;
 import main.entities.landscape.surface.Water;
-import main.entities.landscape.static_objects.Tree;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -33,31 +33,29 @@ public class AreaGenerator {
         generateGround();
         generateWater();
 
-        generateEntity(new Tree());
-        generateEntity(new Rock());
-        generateEntity(new Grass());
+        generateEntity(new Tree(), getEntityCountToGenerate(Tree.class));
+        generateEntity(new Rock(), getEntityCountToGenerate(Rock.class));
+        generateEntity(new Grass(), getEntityCountToGenerate(Grass.class));
 
         // creatures
 
         // herbivores
-        generateEntity(new Elephant(6, 1));
-        generateEntity(new Ostrich(3, 3));
-        generateEntity(new Antelope(3, 3));
-        generateEntity(new Zebra(4, 2));
-        generateEntity(new Buffalo(4, 2));
+        generateEntity(new Elephant(7, 1), getEntityCountToGenerate(Elephant.class));
+        generateEntity(new Ostrich(3, 3), getEntityCountToGenerate(Ostrich.class));
+        generateEntity(new Antelope(3, 3), getEntityCountToGenerate(Antelope.class));
+        generateEntity(new Zebra(4, 2), getEntityCountToGenerate(Zebra.class));
+        generateEntity(new Buffalo(4, 2), getEntityCountToGenerate(Buffalo.class));
 
         // predators
-        generateEntity(new Lion(4, 2));
-        generateEntity(new Panther(3, 2));
-        generateEntity(new Tiger(3, 2));
+        generateEntity(new Lion(4, 2), getEntityCountToGenerate(Lion.class));
+        generateEntity(new Panther(3, 2), getEntityCountToGenerate(Panther.class));
+        generateEntity(new Tiger(3, 2), getEntityCountToGenerate(Tiger.class));
 
         return area;
     }
 
-    public void generateEntity(Entity entity) {
+    public void generateEntity(Entity entity, int entityCount) {
         updateAreaGroundCoordinates();
-
-        int entityCount = getEntityCountToGenerate(entity);
 
         for (int i = 0; i < entityCount; i++) {
             Coordinates groundCoordinates = getRandomCoordinates(areaGroundCoordinates);
@@ -203,8 +201,8 @@ public class AreaGenerator {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private int getEntityCountToGenerate(Entity entity) {
-        double multiplier = EntityGenerationMultipliers.getMultiplier(entity.getClass());
+    private int getEntityCountToGenerate(Class<? extends Entity> entityClass) {
+        double multiplier = EntityGenerationMultipliers.getMultiplier(entityClass);
 
         return (int) (area.getLandscapeEntities().size() * multiplier);
     }

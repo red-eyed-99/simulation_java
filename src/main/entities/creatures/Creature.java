@@ -4,9 +4,6 @@ import main.CreatureStatus;
 import main.CreatureViewDirection;
 import main.entities.Entity;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public abstract class Creature extends Entity {
     private int healthPoint;
     private final int moveSpeed;

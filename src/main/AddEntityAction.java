@@ -1,12 +1,14 @@
 package main;
 
-import main.entities.creatures.herbivores.Herbivore;
-import main.entities.creatures.herbivores.Ostrich;
+import main.entities.creatures.herbivores.*;
 import main.entities.landscape.food_resources.Grass;
 
-public class AddEntityAction extends Action{
+import java.util.Random;
+
+public class AddEntityAction extends Action {
     private final Area area;
     private final AreaGenerator areaGenerator;
+    private final Random random = new Random();
 
     public AddEntityAction(Area area, AreaGenerator areaGenerator) {
         this.area = area;
@@ -15,11 +17,33 @@ public class AddEntityAction extends Action{
 
     @Override
     public void execute() {
-        if (area.getLandscapeEntities().keySet().stream().filter(coordinates -> area.getLandscapeEntities().get(coordinates) instanceof Grass).count() < 2) {
-            areaGenerator.generateEntity(new Grass());
+        if (area.getLandscapeEntities().keySet().stream()
+                .filter(coordinates -> area.getLandscapeEntities().get(coordinates) instanceof Grass)
+                .count() < area.getHerbivoresCount()) {
+            areaGenerator.generateEntity(new Grass(), 3);
         }
-//        if (area.getCreatures().keySet().stream().filter(coordinates -> area.getCreatures().get(coordinates) instanceof Herbivore).count() < 2) {
-//            areaGenerator.generateEntity(new Ostrich());
-//        }
+
+        if (area.getHerbivoresCount() < area.getPredatorsCount()) {
+            try {
+                for (int i = 0; i < 3; i++) {
+                    areaGenerator.generateEntity(getRandomHerbivore(), 1);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private Herbivore getRandomHerbivore() throws RuntimeException {
+        int number = random.nextInt(5);
+
+        return switch (number) {
+            case 0 -> new Antelope(3, 3);
+            case 1 -> new Buffalo(4, 2);
+            case 2 -> new Elephant(7, 1);
+            case 3 -> new Ostrich(3, 3);
+            case 4 -> new Zebra(4, 2);
+            default -> throw new RuntimeException();
+        };
     }
 }

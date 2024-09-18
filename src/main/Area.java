@@ -2,10 +2,13 @@ package main;
 
 import main.entities.Entity;
 import main.entities.creatures.Creature;
+import main.entities.creatures.herbivores.Herbivore;
+import main.entities.creatures.predators.Predator;
 import main.entities.landscape.LandscapeEntity;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Area {
     public final int size;
@@ -46,5 +49,17 @@ public class Area {
 
     public void setWaterCoordinates(Set<Coordinates> waterCoordinates) {
         this.waterCoordinates = waterCoordinates;
+    }
+
+    public int getPredatorsCount() {
+        return (int) creatures.keySet().stream()
+                .filter(coordinates -> creatures.get(coordinates) instanceof Predator)
+                .count();
+    }
+
+    public int getHerbivoresCount() {
+        return (int) creatures.keySet().stream()
+                .filter(coordinates -> creatures.get(coordinates) instanceof Herbivore)
+                .count();
     }
 }
