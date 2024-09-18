@@ -8,9 +8,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class Creature extends Entity {
-    private int healthPoint = 1;
-    private int moveSpeed = 2;
-    private int runSpeed;
+    private int healthPoint;
+    private final int moveSpeed;
+    private final int maxHealthPoint;
+
+    public Creature(int healthPoint, int moveSpeed) {
+        this.healthPoint = healthPoint;
+        this.maxHealthPoint = healthPoint;
+        this.moveSpeed = moveSpeed;
+    }
 
     private CreatureStatus status = CreatureStatus.IN_SEARCH_FOOD;
 

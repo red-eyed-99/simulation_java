@@ -40,15 +40,15 @@ public class ImagePathsManager {
     private static void setCreatureImagePaths() {
         // predators
         CREATURE_PATHS_TO_IMAGE.put(Lion.class, getCreatureImagePaths(Lion.class));
-        CREATURE_PATHS_TO_IMAGE.put(Crocodile.class, getCreatureImagePaths(Crocodile.class));
         CREATURE_PATHS_TO_IMAGE.put(Panther.class, getCreatureImagePaths(Panther.class));
         CREATURE_PATHS_TO_IMAGE.put(Tiger.class, getCreatureImagePaths(Tiger.class));
 
         //herbivores
         CREATURE_PATHS_TO_IMAGE.put(Elephant.class, getCreatureImagePaths(Elephant.class));
-        CREATURE_PATHS_TO_IMAGE.put(Girafee.class, getCreatureImagePaths(Girafee.class));
         CREATURE_PATHS_TO_IMAGE.put(Ostrich.class, getCreatureImagePaths(Ostrich.class));
-        CREATURE_PATHS_TO_IMAGE.put(Rhino.class, getCreatureImagePaths(Rhino.class));
+        CREATURE_PATHS_TO_IMAGE.put(Antelope.class, getCreatureImagePaths(Antelope.class));
+        CREATURE_PATHS_TO_IMAGE.put(Zebra.class, getCreatureImagePaths(Zebra.class));
+        CREATURE_PATHS_TO_IMAGE.put(Buffalo.class, getCreatureImagePaths(Buffalo.class));
     }
 
     private static HashMap<CreatureViewDirection, String> getCreatureImagePaths(Class<? extends Creature> creatureType) {
@@ -61,10 +61,6 @@ public class ImagePathsManager {
         if (creatureType == Lion.class) {
             pathToImages[0] = "/main/ui/images/creatures/predators/lion/lion_left.png";
             pathToImages[1] = "/main/ui/images/creatures/predators/lion/lion_right.png";
-        }
-        if (creatureType == Crocodile.class) {
-            pathToImages[0] = "/main/ui/images/creatures/predators/crocodile/crocodile_left.png";
-            pathToImages[1] = "/main/ui/images/creatures/predators/crocodile/crocodile_right.png";
         }
         if (creatureType == Panther.class) {
             pathToImages[0] = "/main/ui/images/creatures/predators/panther/panther_left.png";
@@ -81,17 +77,21 @@ public class ImagePathsManager {
             pathToImages[0] = "/main/ui/images/creatures/herbivores/elephant/elephant_left.png";
             pathToImages[1] = "/main/ui/images/creatures/herbivores/elephant/elephant_right.png";
         }
-        if (creatureType == Girafee.class) {
-            pathToImages[0] = "/main/ui/images/creatures/herbivores/girafee/girafee_left.png";
-            pathToImages[1] = "/main/ui/images/creatures/herbivores/girafee/girafee_right.png";
-        }
         if (creatureType == Ostrich.class) {
             pathToImages[0] = "/main/ui/images/creatures/herbivores/ostrich/ostrich_left.png";
             pathToImages[1] = "/main/ui/images/creatures/herbivores/ostrich/ostrich_right.png";
         }
-        if (creatureType == Rhino.class) {
-            pathToImages[0] = "/main/ui/images/creatures/herbivores/rhino/rhino_left.png";
-            pathToImages[1] = "/main/ui/images/creatures/herbivores/rhino/rhino_right.png";
+        if (creatureType == Antelope.class) {
+            pathToImages[0] = "/main/ui/images/creatures/herbivores/antelope/antelope_left.png";
+            pathToImages[1] = "/main/ui/images/creatures/herbivores/antelope/antelope_right.png";
+        }
+        if (creatureType == Zebra.class) {
+            pathToImages[0] = "/main/ui/images/creatures/herbivores/zebra/zebra_left.png";
+            pathToImages[1] = "/main/ui/images/creatures/herbivores/zebra/zebra_right.png";
+        }
+        if (creatureType == Buffalo.class) {
+            pathToImages[0] = "/main/ui/images/creatures/herbivores/buffalo/buffalo_left.png";
+            pathToImages[1] = "/main/ui/images/creatures/herbivores/buffalo/buffalo_right.png";
         }
 
         creatureImagePaths.put(CreatureViewDirection.LEFT, pathToImages[0]);
