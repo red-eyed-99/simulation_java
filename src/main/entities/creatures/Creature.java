@@ -20,24 +20,14 @@ public abstract class Creature extends Entity {
 
     private CreatureStatus status = CreatureStatus.IN_SEARCH_FOOD;
 
-    public CreatureViewDirection viewDirection = CreatureViewDirection.RIGHT;
-
-    public void makeMove() {
-
-    }
-
-    public void eat() {
-
-    }
-
-    public void takeDamage() {
-        if (healthPoint > 0) {
-            healthPoint--;
-        }
-    }
+    private CreatureViewDirection viewDirection = CreatureViewDirection.RIGHT;
 
     public int getMoveSpeed() {
         return moveSpeed;
+    }
+
+    public int getHealthPoint() {
+        return healthPoint;
     }
 
     public CreatureStatus getStatus() {
@@ -48,7 +38,32 @@ public abstract class Creature extends Entity {
         this.status = status;
     }
 
-    public int getHealthPoint() {
-        return healthPoint;
+    public CreatureViewDirection getViewDirection() {
+        return viewDirection;
     }
+
+    public void makeMove() {
+        // todo
+    }
+
+    public void eat() {
+        if (healthPoint < maxHealthPoint) {
+            healthPoint++;
+        }
+    }
+
+    public void takeDamage() {
+        if (healthPoint > 0) {
+            healthPoint--;
+        }
+    }
+
+    public void changeViewDirection(int xBefore, int xAfter) {
+        if (xBefore < xAfter) {
+            viewDirection = CreatureViewDirection.RIGHT;
+        } else {
+            viewDirection = CreatureViewDirection.LEFT;
+        }
+    }
+
 }
