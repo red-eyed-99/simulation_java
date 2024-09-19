@@ -121,6 +121,16 @@ public class MainController implements SimulationObserver {
     }
 
     private ImageView getAreaGridCellImage(int col, int row, int zIndex) {
+        List<ImageView> images = getGridCellImages(col, row);
+
+        if (!images.isEmpty()) {
+            return images.get(zIndex);
+        }
+
+        throw new NoSuchElementException("Landscape ImageView could not be found at the given coordinates");
+    }
+
+    private List<ImageView> getGridCellImages(int col, int row) {
         List<ImageView> images = new ArrayList<>();
 
         for (Node node : areaGrid.getChildren()) {
@@ -130,14 +140,6 @@ public class MainController implements SimulationObserver {
                 images.add(imageView);
             }
         }
-
-        if (!images.isEmpty()) {
-            return images.get(zIndex);
-        }
-
-        throw new NoSuchElementException("Landscape ImageView could not be found at the given coordinates");
-    }
-
 
         return images;
     }
