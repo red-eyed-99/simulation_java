@@ -1,6 +1,17 @@
 #areaGrid {
     -fx-background-image: url('../images/landscape/ground.png');
     -fx-background-repeat: repeat;
-    -fx-background-size: 4% 4%;
-    -fx-grid-lines-visible: true;
+    -fx-background-size: 10% 10%;
+    -fx-grid-lines-visible: false;
+}
+
+.simulation-control-vbox .button {
+    -fx-text-alignment: center;
+    -fx-label-padding: 10;
+}
+
+.simulation-control-vbox {
+    -fx-alignment: top-center;
+    -fx-spacing: 10;
+    -fx-font-size: 20;
 }
