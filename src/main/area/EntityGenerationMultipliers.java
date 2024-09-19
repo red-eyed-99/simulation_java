@@ -1,4 +1,4 @@
-package main;
+package main.area;
 
 import main.entities.Entity;
 import main.entities.creatures.herbivores.*;

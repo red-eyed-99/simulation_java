@@ -1,5 +1,6 @@
 package main;
 
+import main.area.Area;
 import main.entities.creatures.Creature;
 import main.entities.creatures.herbivores.Herbivore;
 import main.entities.landscape.food_resources.Grass;

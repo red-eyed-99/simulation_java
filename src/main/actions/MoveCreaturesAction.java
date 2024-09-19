@@ -1,5 +1,9 @@
-package main;
+package main.actions;
 
+import main.area.Area;
+import main.Coordinates;
+import main.entities.creatures.CreatureStatus;
+import main.PathFinder;
 import main.entities.creatures.Creature;
 import main.entities.creatures.herbivores.Herbivore;
 import main.entities.creatures.predators.Predator;

@@ -1,4 +1,4 @@
-package main;
+package main.entities.creatures;
 
 public enum CreatureStatus {
     IN_SEARCH_FOOD,

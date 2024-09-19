@@ -1,7 +1,5 @@
 package main.entities.creatures;
 
-import main.CreatureStatus;
-import main.CreatureViewDirection;
 import main.entities.Entity;
 
 public abstract class Creature extends Entity {

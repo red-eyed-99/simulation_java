@@ -1,5 +1,7 @@
-package main;
+package main.actions;
 
+import main.area.Area;
+import main.area.AreaGenerator;
 import main.entities.creatures.herbivores.*;
 import main.entities.landscape.food_resources.Grass;
 

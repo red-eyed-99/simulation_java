@@ -2,6 +2,7 @@ package main;
 
 import main.entities.Entity;
 import main.entities.creatures.Creature;
+import main.entities.creatures.CreatureViewDirection;
 import main.entities.creatures.herbivores.*;
 import main.entities.creatures.predators.*;
 import main.entities.landscape.LandscapeEntity;

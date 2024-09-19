@@ -1,5 +1,6 @@
-package main;
+package main.area;
 
+import main.Coordinates;
 import main.entities.Entity;
 import main.entities.creatures.Creature;
 import main.entities.creatures.herbivores.Herbivore;
