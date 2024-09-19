@@ -15,6 +15,10 @@ import java.io.IOException;
 public class ZoomableScrollPane extends ScrollPane {
     private double scaleValue = 0.7;
     private double zoomIntensity = 0.02;
+    private double maxZoomValue;
+    private double minZoomValue;
+    private double currentZoomValue = 0;
+
     public Node target;
     public Node zoomNode;
 
@@ -28,6 +32,23 @@ public class ZoomableScrollPane extends ScrollPane {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+    }
+
+    public void setZoomValues(double areaSize) {
+        double sizeMultiplier = 2.0;
+
+        if (areaSize >= 15 && areaSize <= 25) {
+            sizeMultiplier = 1.5;
+        }
+        if (areaSize >= 26 && areaSize <= 30) {
+            sizeMultiplier = 1.65;
+        }
+        if (areaSize >= 31 && areaSize <= 35) {
+            sizeMultiplier = 1.8;
+        }
+
+        minZoomValue = areaSize * -scaleValue / sizeMultiplier;
+        maxZoomValue = areaSize * (scaleValue / 3);
     }
 
     public void setZoomableTarget(Node target) {
@@ -51,8 +72,21 @@ public class ZoomableScrollPane extends ScrollPane {
 
         outerNode.setOnScroll(e -> {
             if (e.isControlDown()) {
+                if (e.getDeltaY() > 0) {
+                    if (currentZoomValue < maxZoomValue) {
+                        currentZoomValue = currentZoomValue + scaleValue;
+                    }
+                } else {
+                    if (currentZoomValue > minZoomValue) {
+                        currentZoomValue = currentZoomValue - scaleValue;
+                    }
+                }
+
                 e.consume();
-                onScroll(e.getTextDeltaY(), new Point2D(e.getX(), e.getY()));
+
+                if (currentZoomValue <= maxZoomValue && currentZoomValue >= minZoomValue) {
+                    onScroll(e.getTextDeltaY(), new Point2D(e.getX(), e.getY()));
+                }
             }
         });
         outerNode.setOnDragDetected(e -> zoomNode.setCursor(Cursor.CLOSED_HAND));

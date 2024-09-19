@@ -4,6 +4,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import main.area.Area;
+import main.area.AreaGenerator;
+
 import java.io.IOException;
 
 public class Main extends Application {
@@ -13,7 +16,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        AreaGenerator areaGenerator = new AreaGenerator(new Area(10));
+        AreaGenerator areaGenerator = new AreaGenerator(new Area(20));
         Area area = areaGenerator.generateArea();
 
         Simulation simulation = new Simulation(area, areaGenerator);
@@ -25,6 +28,7 @@ public class Main extends Application {
         MainController controller = fxmlLoader.getController();
         controller.setSimulation(simulation);
         controller.fillAreaGridCells();
+        controller.setUpZoomableScrollPane();
 
         stage.setScene(scene);
         stage.setTitle("Simulation");

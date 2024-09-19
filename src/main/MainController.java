@@ -97,6 +97,10 @@ public class MainController implements SimulationObserver {
         }
     }
 
+    public void setUpZoomableScrollPane() {
+        zoomableScrollPane.setZoomValues(simulation.getArea().size);
+    }
+
     private ImageView getEntityImageView(Entity entity) {
         String pathToImage;
         pathToImage = ImagePathsManager.getEntityImagePath(entity);
