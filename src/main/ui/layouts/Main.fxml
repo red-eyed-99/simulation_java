@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.Menu?>
 <?import main.ui.custom_controls.ZoomableScrollPane?>
 
 <?import javafx.scene.control.Button?>
@@ -44,5 +42,8 @@
                 text="Pause simulation"
                 disable="true"
                 onAction="#pauseSimulationButtonClick"/>
-    </HBox>
+        <ImageView fitHeight="150" fitWidth="150">
+            <Image url="/main/ui/images/ctrl_mouse_zoom.png"/>
+        </ImageView>
+    </VBox>
 </GridPane>
