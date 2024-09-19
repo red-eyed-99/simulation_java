@@ -2,6 +2,11 @@ package main;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import main.actions.Action;
+import main.actions.AddEntityAction;
+import main.actions.MoveCreaturesAction;
+import main.area.Area;
+import main.area.AreaGenerator;
 import main.entities.creatures.Creature;
 import main.entities.landscape.LandscapeEntity;
 
@@ -12,17 +17,17 @@ import java.util.Map;
 public class Simulation {
     private int movesCount = 0;
 
-    private Area area;
-    private AreaGenerator areaGenerator;
+    private final Area area;
+    private final AreaGenerator areaGenerator;
 
-    private List<Action> turnActions = new ArrayList<>();
+    private final List<Action> turnActions = new ArrayList<>();
 
     private Map<Coordinates, LandscapeEntity> landscapeBeforeRedraw;
     private Map<Coordinates, Creature> creaturesBeforeRedraw;
 
     private SimulationObserver observer;
 
-    private SimulationThread simulationThread;
+    private final SimulationThread simulationThread;
 
     public Simulation(Area area, AreaGenerator areaGenerator) {
         this.area = area;
@@ -37,7 +42,7 @@ public class Simulation {
     }
 
     private void setActions() {
-        turnActions.add(new CreaturesAction(area));
+        turnActions.add(new MoveCreaturesAction(area));
         turnActions.add(new AddEntityAction(area, areaGenerator));
     }
 
@@ -55,10 +60,9 @@ public class Simulation {
         updateEntitiesBeforeRedraw();
 
         turnActions.get(0).execute();
+        movesCount++;
         notifyObserverForRedraw();
         updateEntitiesBeforeRedraw();
-
-        movesCount++;
     }
 
     public void startSimulation() {
@@ -75,16 +79,21 @@ public class Simulation {
     }
 
     private void notifyObserverForRedraw() {
-        notifyLandscapeUpdated(landscapeBeforeRedraw);
-        notifyCreaturesUpdated(creaturesBeforeRedraw, landscapeBeforeRedraw);
+        notifyLandscapeUpdated();
+        notifyCreaturesUpdated();
+        notifyMovesCountIncreased();
     }
 
-    private void notifyLandscapeUpdated(Map<Coordinates, LandscapeEntity> oldLandscape) {
-        observer.onAreaLandscapeUpdated(oldLandscape);
+    private void notifyMovesCountIncreased() {
+        observer.onMovesCountIncrease(movesCount);
     }
 
-    private void notifyCreaturesUpdated(Map<Coordinates, Creature> oldCreatures, Map<Coordinates, LandscapeEntity> oldLandscape) {
-        observer.onAreaCreaturesUpdated(oldCreatures, oldLandscape);
+    private void notifyLandscapeUpdated() {
+        observer.onAreaLandscapeUpdated(landscapeBeforeRedraw);
+    }
+
+    private void notifyCreaturesUpdated() {
+        observer.onAreaCreaturesUpdated(creaturesBeforeRedraw, landscapeBeforeRedraw);
     }
 
     private void updateEntitiesBeforeRedraw() {
@@ -108,19 +117,19 @@ public class Simulation {
 
                     Platform.runLater(Simulation.this::notifyObserverForRedraw);
 
-                    Thread.sleep(50);
+                    Thread.sleep(250);
 
                     updateEntitiesBeforeRedraw();
 
                     turnActions.get(0).execute();
 
+                    movesCount++;
+
                     Platform.runLater(Simulation.this::notifyObserverForRedraw);
 
-                    Thread.sleep(500);
+                    Thread.sleep(250);
 
                     updateEntitiesBeforeRedraw();
-
-                    movesCount++;
                 }
             }
         };

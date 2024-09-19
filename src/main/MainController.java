@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
@@ -19,6 +20,7 @@ import main.entities.landscape.surface.Water;
 import main.ui.custom_controls.ZoomableScrollPane;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MainController implements SimulationObserver {
     private Simulation simulation;
@@ -28,6 +30,9 @@ public class MainController implements SimulationObserver {
 
     @FXML
     private ZoomableScrollPane zoomableScrollPane;
+
+    @FXML
+    private Label movesCountLabel;
 
     @FXML
     private Button nextTurnButton;
@@ -102,15 +107,7 @@ public class MainController implements SimulationObserver {
     }
 
     private ImageView getAreaGridCellImage(int col, int row) {
-        List<ImageView> images = new ArrayList<>();
-
-        for (Node node : areaGrid.getChildren()) {
-            if (node instanceof ImageView imageView
-                    && GridPane.getColumnIndex(node) == col
-                    && GridPane.getRowIndex(node) == row) {
-                images.add(imageView);
-            }
-        }
+        List<ImageView> images = getGridCellImages(col, row);
 
         if (!images.isEmpty()) {
             return images.getLast();
@@ -138,6 +135,13 @@ public class MainController implements SimulationObserver {
     }
 
 
+        return images;
+    }
+
+    @Override
+    public void onMovesCountIncrease(int movesCount) {
+        movesCountLabel.setText(String.valueOf(movesCount));
+    }
 
     @Override
     public void onAreaLandscapeUpdated(Map<Coordinates, LandscapeEntity> oldLandscape) {
