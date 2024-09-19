@@ -31,7 +31,7 @@ ___
 ### Способ 2
 - Установить **Java Development Kit** или **Java Runtime Environment** от версии **22.0.2**
 - Установить **SDK JavaFX** https://gluonhq.com/products/javafx/. 
-- В командной строке ввести команду
+- Запустить **Simulation.jar** из **Simulation.zip**, выполнив команду в командной строке
   ```
   java --module-path /path/to/javafx/lib --add-modules java.base,javafx.base,javafx.controls,javafx.fxml -jar /path/to/Simulation.jar
   ```
