@@ -27,7 +27,8 @@ ___
 10. Симуляция идет **бесконечно**.
 ## Запуск:
 ### Способ 1
-Запустить **Simulation.exe** из архива **Simulation.zip**
+- Установить **Java Development Kit** или **Java Runtime Environment** от версии **22.0.2**
+- Запустить **Simulation.exe** из архива **Simulation.zip**
 ### Способ 2
 - Установить **Java Development Kit** или **Java Runtime Environment** от версии **22.0.2**
 - Установить **SDK JavaFX** https://gluonhq.com/products/javafx/. 
